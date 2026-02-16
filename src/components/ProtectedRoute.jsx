@@ -2,9 +2,9 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 export const ProtectedRoute = ({ children }) => {
-    const userId = useSelector(state => state.auth.userId);
+    const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
     
-    if (!userId) {
+    if (!isAuthenticated) {
         return <Navigate to={`/login?redirectUrl=${encodeURIComponent(window.location.pathname)}`} />;
     }
 

@@ -20,134 +20,40 @@ const safe = async (fn, { toastId, errorMessage }) => {
   }
 };
 
-export const fetchUsers = () =>
-  safe(async () => ok(await delay(Users)), {
-    toastId: "users:fetch",
-    errorMessage: "Failed to fetch users",
+export const fetchUsers = async () => {
+  const data = await fetch('http://localhost:8000/api/users/')
+  return await data.json()
+}
+
+export const fetchProducts = async ({
+  categories = [],
+  sort = "",
+  page = null,
+  search = "",
+  signal,
+} = {}) => {
+  const params = new URLSearchParams();
+
+  if (sort) params.set("sort", sort);
+  if (categories.length > 0) params.set("categories", categories.join(","));
+  if (page) params.set("page", String(page));
+  if (search) params.set("search", search);
+
+  const qs = params.toString();
+  const url = `http://localhost:8000/api/products/${qs ? `?${qs}` : ""}`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    signal,
   });
 
-const encodeCursor = (product, sortByPrice = false) => {
-  const cursorData = sortByPrice
-    ? { id: product.id, price: product.price }
-    : { id: product.id };
-  return btoa(JSON.stringify(cursorData));
-};
-
-const decodeCursor = (cursor) => {
-  try {
-    return JSON.parse(atob(cursor));
-  } catch {
-    return null;
+  if (!response.ok) {
+    throw new Error("Failed to fetch products");
   }
-};
 
-export const fetchProducts = ({
-  categoryIds = [],
-  sortByPrice = false,
-  sortByPriceAsc = false,
-  cursor = null,
-  limit = 10,
-  search = "",
-} = {}) => {
-  // return a demo error for testing
-  // return fail("Demo error for testing", "products:fetch:demo");
-  return safe(
-    async () => {
-      const categoryNameById = new Map(Categories.map((c) => [c.id, c.name]));
-
-      const categoryIdFilter = new Set(
-        (Array.isArray(categoryIds) ? categoryIds : [])
-          .map((id) => Number(id))
-          .filter((id) => Number.isFinite(id))
-      );
-      const shouldFilterByCategory = categoryIdFilter.size > 0;
-      const searchQuery = search.trim().toLowerCase();
-
-      const productCategoryIdsByProductId = new Map();
-      for (const pc of ProductCategories) {
-        const list = productCategoryIdsByProductId.get(pc.productId);
-        if (list) list.push(pc.categoryId);
-        else productCategoryIdsByProductId.set(pc.productId, [pc.categoryId]);
-      }
-
-      let productsWithCategories = [];
-      for (const product of Products) {
-        if (searchQuery && !product.name.toLowerCase().includes(searchQuery)) {
-          continue;
-        }
-
-        const productCategoryIds = productCategoryIdsByProductId.get(product.id) || [];
-
-        if (shouldFilterByCategory) {
-          let matches = false;
-          for (const catId of productCategoryIds) {
-            if (categoryIdFilter.has(catId)) {
-              matches = true;
-              break;
-            }
-          }
-          if (!matches) continue;
-        }
-
-        const categories = [];
-        for (const catId of productCategoryIds) {
-          const name = categoryNameById.get(catId);
-          if (name) categories.push(name);
-        }
-
-        productsWithCategories.push({ ...product, categories });
-      }
-
-      if (sortByPrice) {
-        productsWithCategories.sort((a, b) => {
-          const priceCompare = sortByPriceAsc ? a.price - b.price : b.price - a.price;
-          return priceCompare !== 0 ? priceCompare : a.id - b.id;
-        });
-      } else {
-        productsWithCategories.sort((a, b) => a.id - b.id);
-      }
-
-      const totalCount = productsWithCategories.length;
-
-      if (cursor) {
-        const cursorData = decodeCursor(cursor);
-        if (cursorData) {
-          const cursorIndex = productsWithCategories.findIndex((product) => {
-            if (sortByPrice && cursorData.price !== undefined) {
-              const priceCompare = sortByPriceAsc
-                ? product.price > cursorData.price || (product.price === cursorData.price && product.id > cursorData.id)
-                : product.price < cursorData.price || (product.price === cursorData.price && product.id > cursorData.id);
-              return priceCompare;
-            }
-            return product.id > cursorData.id;
-          });
-
-          if (cursorIndex !== -1) {
-            productsWithCategories = productsWithCategories.slice(cursorIndex);
-          } else {
-            productsWithCategories = [];
-          }
-        }
-      }
-
-      const pageData = productsWithCategories.slice(0, limit);
-      const hasMore = productsWithCategories.length > limit;
-      const nextCursor = hasMore ? encodeCursor(pageData[pageData.length - 1], sortByPrice) : null;
-
-      return ok(
-        await delay({
-          data: pageData,
-          nextCursor,
-          hasMore,
-          totalCount,
-        })
-      );
-    },
-    {
-      toastId: "products:fetch",
-      errorMessage: "Failed to fetch products",
-    }
-  );
+  return await response.json();
 };
 
 export const fetchCategories = () =>
@@ -273,19 +179,6 @@ export const updateCart = (productId, quantity) => {
   );
 };
 
-export const loginUser = (email, password) => {
-  return safe(
-    async () => {
-      const user = Users.find((u) => u.email === email && u.password === password);
-      if (!user) {
-        return fail("Invalid email or password", "auth:login:invalid");
-      }
-      return ok(await delay({ id: user.id }));
-    },
-    { toastId: "auth:login", errorMessage: "Login failed" }
-  );
-};
-
 export const searchProducts = (query) => {
   return safe(
     async () => {
@@ -304,13 +197,17 @@ export const searchProducts = (query) => {
   );
 };
 
-export const registerUser = (email, password) => {
-  return safe(
-    async () => {
-      const newUser = { id: nextId(Users), email, password };
-      Users.push(newUser);
-      return ok(await delay(newUser));
+export const registerUser = async (username, email, password) => {
+  const response = await fetch('http://localhost:8000/api/register/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
     },
-    { toastId: "users:register", errorMessage: "Failed to register user" }
-  );
+    credentials: 'include',
+    body: JSON.stringify({ username, email, password }),
+  });
+  if (!response.ok)
+    throw new Error("Failed to register user");
+  
+  return await response.json();
 };

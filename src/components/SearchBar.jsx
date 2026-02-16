@@ -30,7 +30,6 @@ export const SearchBar = ({ className }) => {
       if (term) {
         try {
           const res = await searchProducts(term);
-          // Avoid stale response overwriting newer results
           if (latestTermRef.current !== term) return;
           if (res.success) {
             setResults(res.data);

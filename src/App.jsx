@@ -4,15 +4,20 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchCartAction } from "./context/cartSlice";
 import { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
+import { initializeAuth } from "./context/authSlice";
 
 export const App = () => {
   const dispatch = useDispatch();
-  const userId = useSelector((state) => state.auth.userId);
-
+  const authContext = useSelector((state) => state.auth);
+  const { isLoading, isAuthenticated } = authContext;
+  console.log(authContext);
   useEffect(() => {
-    if (userId) dispatch(fetchCartAction());
-  }, [dispatch, userId]);
+    if (isAuthenticated) dispatch(fetchCartAction());
+    else dispatch(initializeAuth());
+  }, [dispatch, isAuthenticated]);
 
+  if (isLoading) return <div>Loading...</div>;
+  
   return (
     <>
       <RouterProvider router={router} />

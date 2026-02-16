@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import { loginUser } from "../services/api";
 import { useDispatch, useSelector } from "react-redux";
-import { setUserId } from "../context/authSlice";
+import { loginUser } from "../context/authSlice";
 import { fetchCartAction } from "../context/cartSlice";
 import { toast } from "react-toastify";
 
@@ -15,7 +14,7 @@ export const Login = () => {
   const dispatch = useDispatch();
 
   const authContext = useSelector((state) => state.auth);
-  if (authContext.userId) {
+  if (authContext.accessToken) {
     return <Navigate to="/" />;
   }
   
@@ -25,20 +24,13 @@ export const Login = () => {
     setError("");
     
     try {
-      const res = await loginUser(email, password);
-
-      if (res.success) {
-        const redirectUrl = new URLSearchParams(window.location.search).get("redirectUrl");
-        dispatch(setUserId(res.data.id));
-        dispatch(fetchCartAction());
-        navigate(redirectUrl || "/");
-      } else {
-        setError(res.message || "Login failed");
-      }
+      await dispatch(loginUser({ email, password })).unwrap();
+      const redirectUrl = new URLSearchParams(window.location.search).get("redirectUrl");
+      dispatch(fetchCartAction());
+      navigate(redirectUrl || "/");
     } catch (err) {
-      const msg = err?.message || "Login failed";
-      setError(msg);
-      toast.error(msg, { toastId: "login:exception" });
+      setError(err?.message || "Login failed");
+      toast.error(err?.message || "Login failed", { toastId: "login:exception" });
     } finally {
       setLoading(false);
     }

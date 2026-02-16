@@ -16,7 +16,7 @@ export const ProductCard = ({ product }) => {
         </h3>
 
         <p className="text-xl font-bold text-gray-900 mb-3">
-          {formatPriceWithLocale(product?.price ?? 0)}
+          ${Number(product.price)}
         </p>
 
         <p className="text-sm text-gray-600 mb-4 line-clamp-2 min-h-[2.5rem]">
@@ -31,7 +31,7 @@ export const ProductCard = ({ product }) => {
                 className="inline-flex items-center gap-1 px-2.5 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full"
               >
                 <Tag className="w-3 h-3" />
-                {category}
+                {category.name}
               </span>
             ))}
           </div>

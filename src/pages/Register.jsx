@@ -2,10 +2,10 @@ import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { registerUser } from "../services/api";
-import { useDispatch, useSelector } from "react-redux";
-import { setUserId } from "../context/authSlice";
+import { useSelector } from "react-redux";
 
 export const Register = () => {
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -13,18 +13,17 @@ export const Register = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const authContext = useSelector((state) => state.auth);
-  if (authContext.userId) {
+  if (authContext.accessToken) {
     return <Navigate to="/" />;
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    if (!email || !password) {
-      setError("Email and password required");
+    if (!username || !email || !password) {
+      setError("Username, email and password are required");
       return;
     }
     if (password !== confirm) {
@@ -33,18 +32,12 @@ export const Register = () => {
     }
     setLoading(true);
     try {
-      const res = await registerUser(email, password);
-      if (res.success) {
-        toast.success("Registration successful! Please log in.", { toastId: "register:success" });
-        dispatch(setUserId(res.data.id));
-        navigate("/");
-      } else {
-        setError(res.message || "Registration failed");
-      }
+      await registerUser(username, email, password);
+      toast.success("Registration successful! Please login to continue", { toastId: "register:success" });
+      navigate("/login");
     } catch (err) {
-      const msg = err?.message || "Registration failed";
-      setError(msg);
-      toast.error(msg, { toastId: "register:exception" });
+      setError(err?.message || "Registration failed");
+      toast.error(err?.message || "Registration failed", { toastId: "register:exception" });
     } finally {
       setLoading(false);
     }
@@ -56,6 +49,21 @@ export const Register = () => {
       className="max-w-sm mx-auto mt-20 bg-white rounded-xl shadow-lg p-8 flex flex-col gap-5 border border-gray-200"
     >
       <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">Register</h2>
+
+      <div>
+        <label className="block text-gray-700 mb-1 font-medium" htmlFor="username">
+          Username
+        </label>
+        <input
+          id="username"
+          type="text"
+          placeholder="Choose a username"
+          value={username}
+          onChange={e => setUsername(e.target.value)}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
+          required
+        />
+      </div>
 
       <div>
         <label className="block text-gray-700 mb-1 font-medium" htmlFor="email">

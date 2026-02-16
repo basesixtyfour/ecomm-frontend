@@ -2,17 +2,13 @@ import { Filter, ArrowUpDown, X } from "lucide-react";
 
 const CATEGORIES = [
   "Electronics",
-  "Household Supplies",
-  "Personal Wellness",
-  "Grocery",
-  "Fashion",
+  "Clothing & Fashion",
   "Home & Kitchen",
-  "Books",
+  "Books & Stationery",
   "Sports & Outdoors",
-  "Beauty",
+  "Beauty & Personal Care",
   "Toys & Games",
-  "Office & Stationery",
-  "Pet Supplies",
+  "Automotive",
 ];
 
 const SORT_OPTIONS = [
@@ -108,33 +104,6 @@ export const ProductSidebar = ({
           ))}
         </div>
       </div>
-
-      {selectedCategories.length > 0 && (
-        <>
-          <div className="border-t border-gray-200 my-4" />
-          <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-2">
-              Active Filters
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {selectedCategories.map((category) => (
-                <span
-                  key={category}
-                  className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full"
-                >
-                  {category}
-                  <button
-                    onClick={() => handleCategoryToggle(category)}
-                    className="hover:text-gray-900 transition-colors"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </span>
-              ))}
-            </div>
-          </div>
-        </>
-      )}
     </aside>
   );
 };
