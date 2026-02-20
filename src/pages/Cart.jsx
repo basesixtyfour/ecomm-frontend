@@ -3,16 +3,12 @@ import { ShoppingCart } from "lucide-react";
 import { CartItem } from "../components/CartItem";
 import { EmptyCartCTA } from "../components/EmptyCartCTA";
 import { OrderSummary } from "../components/OrderSummary";
+import { selectCartItems, selectCartItemCount, selectCartTotalPrice } from "../context/cartSlice";
 
 export const Cart = () => {
-  const cart = useSelector(state => state.cart.cart);
-
-  // Calculate subtotal in paisa (keep calculations in paisa to avoid floating point errors)
-  const subtotal = cart.reduce((sum, { product, quantity }) => {
-    return sum + (product?.price ?? 0) * quantity;
-  }, 0);
-
-  const itemCount = cart.reduce((sum, { quantity }) => sum + quantity, 0);
+  const items = useSelector(selectCartItems);
+  const itemCount = useSelector(selectCartItemCount);
+  const totalPrice = useSelector(selectCartTotalPrice);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -33,18 +29,18 @@ export const Cart = () => {
           </div>
         </div>
 
-        {cart.length === 0 ? (
+        {items.length === 0 ? (
           <EmptyCartCTA />
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-4">
-              {cart.map((item) => (
+              {items.map((item) => (
                 <CartItem key={item.id} {...item} />
               ))}
             </div>
 
             <div className="lg:col-span-1">
-              <OrderSummary subtotal={subtotal} itemCount={itemCount} />
+              <OrderSummary subtotal={totalPrice} itemCount={itemCount} />
             </div>
           </div>
         )}

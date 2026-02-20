@@ -2,24 +2,24 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { Package, Plus, Minus, Trash2 } from "lucide-react";
-import { updateCart } from "../services/api";
-import { fetchCartAction } from "../context/cartSlice";
-import { formatPriceWithLocale } from "../utils/price";
+import { updateCartItemAsync, deleteCartItemAsync } from "../context/cartSlice";
+import { formatPrice } from "../utils/price";
 import { toast } from "react-toastify";
 
-export const CartItem = ({ productId, quantity, product }) => {
+export const CartItem = ({ id, quantity, product }) => {
   const dispatch = useDispatch();
   const [isUpdating, setIsUpdating] = useState(false);
 
   const handleCartUpdate = async (newQuantity) => {
     setIsUpdating(true);
     try {
-      const res = await updateCart(productId, newQuantity);
-      if (res.success) {
-        dispatch(fetchCartAction());
+      if (newQuantity <= 0) {
+        await dispatch(deleteCartItemAsync(id)).unwrap();
+      } else {
+        await dispatch(updateCartItemAsync({ itemId: id, quantity: newQuantity })).unwrap();
       }
     } catch (err) {
-      toast.error(err?.message || "Failed to update cart", { toastId: "cart:update:exception" });
+      toast.error(err || "Failed to update cart", { toastId: "cart:update:exception" });
     } finally {
       setIsUpdating(false);
     }
@@ -32,10 +32,10 @@ export const CartItem = ({ productId, quantity, product }) => {
       </div>
       <div className="flex-1 min-w-0">
         <Link
-          to={`/products/${productId}`}
+          to={`/products/${product?.id}`}
           className="font-semibold text-gray-900 hover:text-gray-600 transition-colors line-clamp-2"
         >
-          {product?.name ?? `Product #${productId}`}
+          {product?.name ?? `Item #${id}`}
         </Link>
         {product?.description && (
           <p className="text-sm text-gray-500 mt-1 line-clamp-1">
@@ -43,12 +43,12 @@ export const CartItem = ({ productId, quantity, product }) => {
           </p>
         )}
         <p className="text-gray-600 text-sm mt-2">
-          {formatPriceWithLocale(product?.price ?? 0)} × {quantity}
+          {formatPrice(product?.price ?? 0)} × {quantity}
         </p>
       </div>
       <div className="flex-shrink-0 flex flex-col items-end gap-3">
         <p className="font-semibold text-gray-900">
-          {formatPriceWithLocale(((product?.price ?? 0) * quantity))}
+          {formatPrice(((product?.price ?? 0) * quantity))}
         </p>
         <div className="flex items-center gap-3 bg-gray-100 rounded-lg p-1">
           <button

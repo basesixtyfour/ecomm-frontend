@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../context/authSlice";
-import { fetchCartAction } from "../context/cartSlice";
+import { fetchCartAsync } from "../context/cartSlice";
 import { toast } from "react-toastify";
 
 export const Login = () => {
@@ -26,7 +26,7 @@ export const Login = () => {
     try {
       await dispatch(loginUser({ email, password })).unwrap();
       const redirectUrl = new URLSearchParams(window.location.search).get("redirectUrl");
-      dispatch(fetchCartAction());
+      dispatch(fetchCartAsync());
       navigate(redirectUrl || "/");
     } catch (err) {
       setError(err?.message || "Login failed");

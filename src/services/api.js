@@ -1,28 +1,86 @@
-import { Users, Products, Categories, nextId, Carts, CartProducts, ProductCategories } from "./db";
-import { toast } from "react-toastify";
+import axios from "axios";
+import { store } from "../store";
+import { setAccessToken } from "../context/authSlice";
 
-const delay = (value, ms = 300) =>
-  new Promise((resolve) => setTimeout(() => resolve(value), ms));
+export const api = axios.create({
+  baseURL: "http://localhost:8000",
+  withCredentials: true,
+});
 
-const ok = (data) => ({ success: true, data, message: null });
-const fail = (message, toastId) => {
-  toast.error(message, { toastId });
-  return { success: false, data: null, message };
+api.interceptors.request.use((config) => {
+  const token = store.getState().auth.accessToken;
+
+  if (token)
+    config.headers.Authorization = `Bearer ${token}`;
+  
+  return config;
+});
+
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
 };
 
-const safe = async (fn, { toastId, errorMessage }) => {
-  try {
-    return await fn();
-  } catch (error) {
-    const msg = error?.message || errorMessage || "Something went wrong";
-    toast.error(msg, { toastId });
-    return { success: false, data: null, message: msg };
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    
+    if (
+      error.response.status === 401 &&
+      error.response.data.code === "token_not_valid" &&
+      !originalRequest._retry
+    ) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return api(originalRequest);
+          });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        const { data } = await api.post("/api/token/refresh/");
+
+        const newToken = data.access;
+        store.dispatch(setAccessToken(newToken));
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
+
+        processQueue(null, newToken);
+        return api(originalRequest);
+      } catch (err) {
+        processQueue(err, null);
+        return Promise.reject(err);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
+    return Promise.reject(error);
   }
-};
+);
 
-export const fetchUsers = async () => {
-  const data = await fetch('http://localhost:8000/api/users/')
-  return await data.json()
+export const fetchUserInfo = async () => {
+  try {
+    const response = await api.get('/api/user/');
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.detail || "Failed to fetch user");
+  }
 }
 
 export const fetchProducts = async ({
@@ -32,182 +90,103 @@ export const fetchProducts = async ({
   search = "",
   signal,
 } = {}) => {
-  const params = new URLSearchParams();
+  const params = {};
 
-  if (sort) params.set("sort", sort);
-  if (categories.length > 0) params.set("categories", categories.join(","));
-  if (page) params.set("page", String(page));
-  if (search) params.set("search", search);
+  if (sort) params.sort = sort;
+  if (categories.length > 0) params.categories = categories.join(",");
+  if (page) params.page = page;
+  if (search) params.search = search;
 
-  const qs = params.toString();
-  const url = `http://localhost:8000/api/products/${qs ? `?${qs}` : ""}`;
+  try {
+    const response = await api.get("/api/products/", {
+      params,
+      signal,
+    });
 
-  const response = await fetch(url, {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    signal,
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch products");
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.detail || "Failed to fetch products");
   }
-
-  return await response.json();
 };
 
-export const fetchCategories = () =>
-  safe(async () => ok(await delay(Categories)), {
-    toastId: "categories:fetch",
-    errorMessage: "Failed to fetch categories",
-  });
 
-export const createUser = (userName) => {
-  return safe(
-    async () => {
-      const newUser = { id: nextId(Users), name: userName };
-      return ok(await delay(newUser));
-    },
-    { toastId: "users:create", errorMessage: "Failed to create user" }
-  );
+export const fetchProduct = async (productId) => {
+  try {
+    const response = await api.get(`/api/products/${productId}/`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.detail || "Failed to fetch product");
+  }
 };
 
-export const createProduct = (productName, description = "") => {
-  return safe(
-    async () => {
-      const newProduct = { id: nextId(Products), name: productName, description };
-      return ok(await delay(newProduct));
-    },
-    { toastId: "products:create", errorMessage: "Failed to create product" }
-  );
+export const fetchCart = async () => {
+  try {
+    const response = await api.get('/api/cart/');
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.detail || "Failed to fetch cart");
+  }
 };
 
-export const fetchProduct = (productId) => {
-  return safe(
-    async () => {
-      const id = Number(productId);
-      const product = Products.find((p) => p.id === id);
-      if (!product) {
-        return fail("Product not found", "product:notFound");
-      }
-
-      const categoryIds = ProductCategories.filter((pc) => pc.productId === id).map(
-        (pc) => pc.categoryId
-      );
-      const categories = categoryIds
-        .map((catId) => {
-          const category = Categories.find((c) => c.id === catId);
-          return category ? category.name : null;
-        })
-        .filter(Boolean);
-
-      return ok(await delay({ ...product, categories }));
-    },
-    { toastId: "product:fetch", errorMessage: "Failed to fetch product" }
-  );
+export const addCartItem = async (productId, quantity) => {
+  try {
+    const response = await api.post('/api/cart/items/', { product_id: productId, quantity });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.detail || "Failed to add cart item");
+  }
 };
 
-export const fetchCart = () => {
-  return safe(
-    async () => {
-      const userId = Number(localStorage.getItem("userId"));
-
-      if (!Number.isFinite(userId) || userId <= 0) {
-        return ok(await delay([]));
-      }
-
-      const cart = Carts.find((c) => c.userId === userId);
-      if (!cart) return ok(await delay([]));
-
-      const cartProducts = CartProducts.filter((cp) => cp.cartId === cart.id).map(
-        (cp) => {
-          const product = Products.find((p) => p.id === cp.productId);
-          return { ...cp, product: product || null };
-        }
-      );
-
-      return ok(await delay(cartProducts));
-    },
-    { toastId: "cart:fetch", errorMessage: "Failed to fetch cart" }
-  );
+export const updateCartItem = async (itemId, quantity) => {
+  try {
+    const response = await api.patch(`/api/cart/items/${itemId}/`, { quantity });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.detail || "Failed to update cart item");
+  }
 };
 
-export const updateCart = (productId, quantity) => {
-  return safe(
-    async () => {
-      const userId = Number(localStorage.getItem("userId"));
-
-      if (!Number.isFinite(userId) || userId <= 0) {
-        return fail("Please login to update cart", "cart:update:login");
-      }
-
-      const cart = Carts.find((c) => c.userId === userId);
-      if (!cart) {
-        return fail("Cart not found", "cart:update:notFound");
-      }
-
-      const existing = CartProducts.find(
-        (cp) => cp.cartId === cart.id && cp.productId === Number(productId)
-      );
-
-      if (quantity <= 0) {
-        if (existing) {
-          const index = CartProducts.findIndex((cp) => cp.id === existing.id);
-          if (index !== -1) {
-            CartProducts.splice(index, 1);
-          }
-        }
-        return ok(await delay(null));
-      }
-
-      if (existing) {
-        existing.quantity = quantity;
-        return ok(await delay(existing));
-      }
-
-      const newItem = {
-        id: nextId(CartProducts),
-        productId: Number(productId),
-        quantity,
-        cartId: cart.id,
-      };
-
-      CartProducts.push(newItem);
-      return ok(await delay(newItem));
-    },
-    { toastId: "cart:update", errorMessage: "Failed to update cart" }
-  );
+export const deleteCartItem = async (itemId) => {
+  try {
+    const response = await api.delete(`/api/cart/items/${itemId}/`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.detail || "Failed to delete cart item");
+  }
 };
 
-export const searchProducts = (query) => {
-  return safe(
-    async () => {
-      const term = (query || "").trim().toLowerCase();
-      if (!term) return ok(await delay([]));
-
-      const products = Products.filter((p) => p.name.toLowerCase().includes(term))
-        .slice(0, 10)
-        .map((p) => ({
-          id: p.id,
-          name: p.name,
-        }));
-      return ok(await delay(products));
-    },
-    { toastId: "products:search", errorMessage: "Search failed" }
-  );
+export const clearCartApi = async () => {
+  try {
+    const response = await api.delete('/api/cart/');
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.detail || "Failed to clear cart");
+  }
 };
 
 export const registerUser = async (username, email, password) => {
-  const response = await fetch('http://localhost:8000/api/register/', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'include',
-    body: JSON.stringify({ username, email, password }),
-  });
-  if (!response.ok)
-    throw new Error("Failed to register user");
-  
-  return await response.json();
+  try {
+    const response = await api.post('/api/register/', { username, email, password });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.detail || "Failed to register user");
+  }
+};
+
+export const fetchOrders = async () => {
+  try {
+    const response = await api.get('/api/orders/');
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.detail || "Failed to fetch orders");
+  }
+};
+
+export const createOrder = async (orderData) => {
+  try {
+    const response = await api.post('/api/orders/', orderData);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.detail || "Failed to create order");
+  }
 };

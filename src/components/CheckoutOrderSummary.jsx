@@ -1,8 +1,8 @@
 import { ShieldCheck } from "lucide-react";
-import { formatPriceWithLocale } from "../utils/price";
+import { formatPrice } from "../utils/price";
 
 export const CheckoutOrderSummary = ({
-  cart,
+  items,
   subtotal,
   canPlaceOrder,
   placeOrder,
@@ -18,16 +18,16 @@ export const CheckoutOrderSummary = ({
       </div>
 
       <div className="space-y-3">
-        {cart.map(({ id, product, quantity }) => (
+        {items.map(({ id, product, quantity }) => (
           <div key={id} className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <div className="text-sm font-medium text-gray-900 truncate">
-                {product?.title ?? "Product"}
+                {product?.name ?? "Product"}
               </div>
               <div className="text-xs text-gray-600">Qty: {quantity}</div>
             </div>
             <div className="text-sm font-semibold text-gray-900 whitespace-nowrap">
-              {formatPriceWithLocale(((product?.price ?? 0) * quantity) || 0)}
+              {formatPrice(subtotal)}
             </div>
           </div>
         ))}
@@ -36,7 +36,7 @@ export const CheckoutOrderSummary = ({
       <div className="border-t border-gray-200 mt-4 pt-4 space-y-2 text-gray-700">
         <div className="flex justify-between text-sm">
           <span>Subtotal</span>
-          <span className="font-medium">{formatPriceWithLocale(subtotal)}</span>
+          <span className="font-medium">{formatPrice(subtotal)}</span>
         </div>
         <div className="flex justify-between text-sm">
           <span>Shipping</span>
@@ -45,7 +45,7 @@ export const CheckoutOrderSummary = ({
         <div className="flex justify-between items-center pt-2 border-t border-gray-100">
           <span className="font-semibold text-gray-900">Total</span>
           <span className="text-xl font-bold text-gray-900">
-            {formatPriceWithLocale(subtotal)}
+            {formatPrice(subtotal)}
           </span>
         </div>
       </div>

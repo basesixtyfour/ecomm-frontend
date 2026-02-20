@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Search } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { searchProducts } from "../services/api";
+import { useSelector } from "react-redux";
+import { fetchProducts } from "../services/api";
 import { toast } from "react-toastify";
 
 export const SearchBar = ({ className }) => {
@@ -10,6 +11,7 @@ export const SearchBar = ({ className }) => {
   const debounceRef = useRef(null);
   const latestTermRef = useRef("");
   const navigate = useNavigate();
+  const { isAuthenticated } = useSelector((state) => state.auth);
 
   useEffect(() => {
     return () => {
@@ -21,6 +23,12 @@ export const SearchBar = ({ className }) => {
     const nextValue = e.target.value;
     setValue(nextValue);
 
+    if (!isAuthenticated) {
+      toast.info("Please login to search products", { toastId: "search:auth" });
+      navigate("/login");
+      return;
+    }
+
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
     debounceRef.current = setTimeout(async () => {
@@ -29,13 +37,9 @@ export const SearchBar = ({ className }) => {
 
       if (term) {
         try {
-          const res = await searchProducts(term);
+          const res = await fetchProducts({ search: term });
           if (latestTermRef.current !== term) return;
-          if (res.success) {
-            setResults(res.data);
-          } else {
-            setResults([]);
-          }
+          setResults(res.results);
         } catch (err) {
           if (latestTermRef.current !== term) return;
           toast.error(err?.message || "Search failed", { toastId: "search:exception" });
@@ -51,7 +55,7 @@ export const SearchBar = ({ className }) => {
     const term = value.trim();
     if (term) {
       setResults([]);
-      navigate(`/products?q=${encodeURIComponent(term)}`);
+      navigate(`/products?search=${encodeURIComponent(term)}`);
     }
   };
 

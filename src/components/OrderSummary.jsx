@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { formatPriceWithLocale } from "../utils/price";
+import { formatPrice } from "../utils/price";
 
 export const OrderSummary = ({ subtotal, itemCount }) => {
   return (
@@ -11,13 +11,13 @@ export const OrderSummary = ({ subtotal, itemCount }) => {
       <div className="space-y-2 text-gray-600">
         <div className="flex justify-between">
           <span>Subtotal ({itemCount} items)</span>
-          <span>{formatPriceWithLocale(subtotal)}</span>
+          <span>{formatPrice(subtotal)}</span>
         </div>
       </div>
       <div className="border-t border-gray-200 mt-4 pt-4 flex justify-between items-center">
         <span className="font-semibold text-gray-900">Total</span>
         <span className="text-xl font-bold text-gray-900">
-          {formatPriceWithLocale(subtotal)}
+          {formatPrice(subtotal)}
         </span>
       </div>
       <Link

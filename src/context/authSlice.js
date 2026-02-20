@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { api } from "../services/api";
 
 const initialState = {
   accessToken: null,
@@ -12,25 +13,13 @@ export const initializeAuth = createAsyncThunk(
   "auth/initialize",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch("http://localhost:8000/api/token/refresh/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        throw new Error("No valid session");
-      }
-
-      const data = await response.json();
+      const { data } = await api.post("/api/token/refresh/");
       return {
         accessToken: data.access,
         user: data.user || null,
       };
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.response?.data?.detail || error.message);
     }
   }
 );
@@ -39,28 +28,13 @@ export const loginUser = createAsyncThunk(
   "auth/login",
   async ({ email, password }, { rejectWithValue }) => {
     try {
-      const response = await fetch("http://localhost:8000/api/token/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.detail || "Login failed");
-      }
-      console.log(data);
-
+      const { data } = await api.post("/api/token/", { email, password });
       return {
         accessToken: data.access,
         user: data.user || null,
       };
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.response?.data?.detail || error.message);
     }
   }
 );

@@ -1,10 +1,10 @@
 import { Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { NavBar } from "./NavBar";
+import { selectCartItemCount } from "../context/cartSlice";
 
 export const Layout = () => {
-  const cart = useSelector(state => state.cart.cart);
-  const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
+  const cartCount = useSelector(selectCartItemCount);
   
   return (
     <>

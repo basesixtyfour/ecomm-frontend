@@ -1,15 +1,18 @@
 import { useMemo, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Link, Navigate, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { ShippingDetails } from "../components/ShippingDetails";
 import { PaymentMethod } from "../components/PaymentMethod";
 import { CheckoutOrderSummary } from "../components/CheckoutOrderSummary";
+import { createOrder } from "../services/api";
+import { clearCartAsync } from "../context/cartSlice";
 
 export const Checkout = () => {
   const navigate = useNavigate();
-  const cartState = useSelector((state) => state.cart);
-  const cart = cartState.cart;
-
+  const dispatch = useDispatch();
+  const { items, totalPrice, status } = useSelector((state) => state.cart);
+  
   const [form, setForm] = useState({
     fullName: "",
     email: "",
@@ -22,20 +25,13 @@ export const Checkout = () => {
     paymentMethod: "cod",
   });
 
-  // Calculate subtotal in paisa (keep calculations in paisa to avoid floating point errors)
-  const { subtotal, itemCount } = useMemo(() => {
-    const subtotalValue = cart.reduce((sum, { product, quantity }) => {
-      return sum + (product?.price ?? 0) * quantity;
-    }, 0);
-    const itemCountValue = cart.reduce((sum, { quantity }) => sum + quantity, 0);
-    return { subtotal: subtotalValue, itemCount: itemCountValue };
-  }, [cart]);
+  const itemCount = items?.reduce((sum, { quantity }) => sum + quantity, 0);
 
-  if (cartState.status === "idle" || cartState.status === "loading") {
+  if (status === "idle" || status === "loading") {
     return <div>Loading...</div>;
   }
 
-  if (cart.length === 0) {
+  if (items?.length === 0) {
     console.log("Cart is empty");
     return <Navigate to="/cart" />;
   }
@@ -54,9 +50,21 @@ export const Checkout = () => {
     setForm((prev) => ({ ...prev, [key]: e.target.value }));
   };
 
-  const placeOrder = () => {
-    alert("Dummy checkout: order placed (not really).");
-    navigate("/products");
+  const placeOrder = async () => {
+    try {
+      const orderData = {
+        items: items.map((item) => ({
+          product: item.product.id,
+          quantity: item.quantity,
+        })),
+      };
+      const order = await createOrder(orderData);
+      await dispatch(clearCartAsync()).unwrap();
+      toast.success("Order placed successfully!");
+      navigate("/profile/orders", { state: { expandOrderId: order.id } });
+    } catch (err) {
+      toast.error(err?.message || "Failed to place order");
+    }
   };
 
   return (
@@ -88,8 +96,8 @@ export const Checkout = () => {
 
           <div className="lg:col-span-1 space-y-6">
             <CheckoutOrderSummary
-              cart={cart}
-              subtotal={subtotal}
+              items={items}
+              subtotal={totalPrice}
               canPlaceOrder={canPlaceOrder}
               placeOrder={placeOrder}
             />

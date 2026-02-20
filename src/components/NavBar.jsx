@@ -1,9 +1,12 @@
-import { ShoppingCart, Store, ShoppingBag } from "lucide-react";
+import { ShoppingCart, Store, ShoppingBag, UserCircle } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { ShopifyIcon } from "./ShopifyIcon";
 import { SearchBar } from "./SearchBar";
 
 export const NavBar = ({ cartCount = 0 }) => {
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
   return (
     <nav className="bg-gray-500 px-6 py-3 flex items-center justify-between">
       <p className="text-white text-lg font-semibold">
@@ -29,6 +32,13 @@ export const NavBar = ({ cartCount = 0 }) => {
               {cartCount > 99 ? "99+" : cartCount}
             </span>
           )}
+        </Link>
+        <Link
+          className="text-white hover:underline"
+          to={isAuthenticated ? "/profile" : "/login"}
+          title={isAuthenticated ? "Profile" : "Sign In"}
+        >
+          <UserCircle className="w-6 h-6" />
         </Link>
       </div>
     </nav>
