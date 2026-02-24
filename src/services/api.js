@@ -1,6 +1,6 @@
 import axios from "axios";
 import { store } from "../store";
-import { setAccessToken } from "../context/authSlice";
+import { setAccessToken, clearAccessToken } from "../context/authSlice";
 
 export const api = axios.create({
   baseURL: "http://localhost:8000",
@@ -36,10 +36,11 @@ api.interceptors.response.use(
     const originalRequest = error.config;
     
     if (
-      error.response.status === 401 &&
-      error.response.data.code === "token_not_valid" &&
-      !originalRequest._retry
-    ) {
+      error.response.status !== 401 ||
+      error.response.data.code !== "token_not_valid"
+    ) return Promise.reject(error);
+
+    if (!originalRequest._retry) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
@@ -54,7 +55,11 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const { data } = await api.post("/api/token/refresh/");
+        const { data } = await axios.post(
+          `${api.defaults.baseURL}/api/token/refresh/`,
+          {},
+          { withCredentials: true }
+        );
 
         const newToken = data.access;
         store.dispatch(setAccessToken(newToken));
@@ -64,6 +69,7 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (err) {
         processQueue(err, null);
+        store.dispatch(clearAccessToken());
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
@@ -188,5 +194,25 @@ export const createOrder = async (orderData) => {
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.detail || "Failed to create order");
+  }
+};
+
+export const CHAT_WS_URL = "ws://localhost:8001";
+
+export const createChatRoom = async () => {
+  try {
+    const response = await api.post('/api/support/chat/');
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.detail || "Failed to create chat room");
+  }
+};
+
+export const fetchActiveRooms = async () => {
+  try {
+    const response = await api.get('/api/support/chat/rooms/');
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.detail || "Failed to fetch rooms");
   }
 };

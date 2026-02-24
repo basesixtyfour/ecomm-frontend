@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Search } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { fetchProducts } from "../services/api";
+import { fetchProducts } from "../../services/api";
 import { toast } from "react-toastify";
 
 export const SearchBar = ({ className }) => {

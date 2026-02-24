@@ -1,4 +1,4 @@
-import { ShoppingCart, Store, ShoppingBag, UserCircle } from "lucide-react";
+import { ShoppingCart, ShoppingBag, UserCircle, Headset } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { ShopifyIcon } from "./ShopifyIcon";
@@ -6,19 +6,22 @@ import { SearchBar } from "./SearchBar";
 
 export const NavBar = ({ cartCount = 0 }) => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const user = useSelector((state) => state.auth.user);
 
   return (
     <nav className="bg-gray-500 px-6 py-3 flex items-center justify-between">
-      <p className="text-white text-lg font-semibold">
+      <Link className="text-white text-lg font-semibold hover:opacity-90" to="/">
         <ShopifyIcon />
-      </p>
+      </Link>
       <div className="flex-1 flex justify-center px-4">
         <SearchBar />
       </div>
       <div className="flex gap-6 items-center">
-        <Link className="text-white hover:underline" to="/">
-          <Store />
-        </Link>
+        {user?.is_staff && (
+          <Link className="text-white hover:underline" to="/agent" title="Agent Dashboard">
+            <Headset className="w-6 h-6" />
+          </Link>
+        )}
         <Link className="text-white hover:underline" to="/products">
           <ShoppingBag />
         </Link>

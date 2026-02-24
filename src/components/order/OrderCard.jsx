@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Package, ShoppingBag } from "lucide-react";
-import { formatPrice } from "../utils/price";
+import { formatPrice } from "../../utils/price";
 
 export const OrderCard = ({ order, defaultOpen = false }) => {
     const [expanded, setExpanded] = useState(defaultOpen);

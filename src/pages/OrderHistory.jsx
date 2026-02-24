@@ -1,6 +1,6 @@
 import { Link, useLoaderData, useLocation } from "react-router-dom";
 import { Package, ArrowLeft, ShoppingBag } from "lucide-react";
-import { OrderCard } from "../components/OrderCard";
+import { OrderCard } from "../components/order/OrderCard";
 
 export const OrderHistory = () => {
   const orders = useLoaderData() || [];

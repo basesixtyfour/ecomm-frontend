@@ -1,5 +1,5 @@
 import { Loader2 } from "lucide-react";
-import { ProductCard } from "../components/ProductCard";
+import { ProductCard } from "./ProductCard";
 
 export const ProductGrid = ({
   products,

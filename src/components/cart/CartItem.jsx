@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { Package, Plus, Minus, Trash2 } from "lucide-react";
-import { updateCartItemAsync, deleteCartItemAsync } from "../context/cartSlice";
-import { formatPrice } from "../utils/price";
+import { updateCartItemAsync, deleteCartItemAsync } from "../../context/cartSlice";
+import { formatPrice } from "../../utils/price";
 import { toast } from "react-toastify";
 
 export const CartItem = ({ id, quantity, product }) => {

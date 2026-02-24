@@ -1,15 +1,16 @@
 import { createBrowserRouter, createRoutesFromElements, Route } from "react-router-dom";
-import { Layout } from "./components/Layout";
+import { Layout } from "./components/layout/Layout";
 import { Home } from "./pages/Home";
 import { ProductInfo } from "./pages/ProductInfo";
 import { fetchProduct, fetchOrders, fetchUserInfo } from "./services/api";
 import { Login } from "./pages/Login";
 import { Cart } from "./pages/Cart";
 import { Checkout } from "./pages/Checkout";
-import { ProtectedRoute } from "./components/ProtectedRoute";
+import { ProtectedRoute } from "./components/layout/ProtectedRoute";
 import { Products } from "./pages/Products";
 import { Profile } from "./pages/Profile";
 import { OrderHistory } from "./pages/OrderHistory";
+import { AgentDashboard } from "./pages/AgentDashboard";
 import { toast } from "react-toastify";
 import { Register } from "./pages/Register";
 import { store } from "./store";
@@ -111,6 +112,14 @@ export const router = createBrowserRouter(
               return [];
             }
           }}
+        />
+        <Route
+          path="agent"
+          element={
+            <ProtectedRoute staffOnly>
+              <AgentDashboard />
+            </ProtectedRoute>
+          }
         />
         <Route 
           path="login" 

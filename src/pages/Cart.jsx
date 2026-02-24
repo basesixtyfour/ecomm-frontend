@@ -1,8 +1,8 @@
 import { useSelector } from "react-redux";
 import { ShoppingCart } from "lucide-react";
-import { CartItem } from "../components/CartItem";
-import { EmptyCartCTA } from "../components/EmptyCartCTA";
-import { OrderSummary } from "../components/OrderSummary";
+import { CartItem } from "../components/cart/CartItem";
+import { EmptyCartCTA } from "../components/cart/EmptyCartCTA";
+import { OrderSummary } from "../components/cart/OrderSummary";
 import { selectCartItems, selectCartItemCount, selectCartTotalPrice } from "../context/cartSlice";
 
 export const Cart = () => {

@@ -1,6 +1,6 @@
 import { ShoppingCart, Tag, Package } from "lucide-react";
 import { Link } from "react-router-dom";
-import { formatPrice } from "../utils/price";
+import { formatPrice } from "../../utils/price";
 
 export const ProductCard = ({ product }) => {
   return (

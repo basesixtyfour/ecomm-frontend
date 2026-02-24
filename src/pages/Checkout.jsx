@@ -2,9 +2,9 @@ import { useMemo, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { ShippingDetails } from "../components/ShippingDetails";
-import { PaymentMethod } from "../components/PaymentMethod";
-import { CheckoutOrderSummary } from "../components/CheckoutOrderSummary";
+import { ShippingDetails } from "../components/checkout/ShippingDetails";
+import { PaymentMethod } from "../components/checkout/PaymentMethod";
+import { CheckoutOrderSummary } from "../components/checkout/CheckoutOrderSummary";
 import { createOrder } from "../services/api";
 import { clearCartAsync } from "../context/cartSlice";
 

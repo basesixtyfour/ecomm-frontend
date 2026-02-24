@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { ProductGridSkeleton } from "../components/ProductGridSkeleton";
-import { ProductSidebar } from "../components/ProductSidebar";
-import { ProductGrid } from "../components/ProductGrid";
-import { ProductsEmptyState } from "../components/ProductsEmptyState";
+import { ProductGridSkeleton } from "../components/product/ProductGridSkeleton";
+import { ProductSidebar } from "../components/product/ProductSidebar";
+import { ProductGrid } from "../components/product/ProductGrid";
+import { ProductsEmptyState } from "../components/product/ProductsEmptyState";
 import { fetchProducts } from "../services/api";
 import { toast } from "react-toastify";
 

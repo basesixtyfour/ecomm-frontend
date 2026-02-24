@@ -1,5 +1,5 @@
 import { ShieldCheck } from "lucide-react";
-import { formatPrice } from "../utils/price";
+import { formatPrice } from "../../utils/price";
 
 export const CheckoutOrderSummary = ({
   items,

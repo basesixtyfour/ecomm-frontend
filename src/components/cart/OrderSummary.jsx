@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { formatPrice } from "../utils/price";
+import { formatPrice } from "../../utils/price";
 
 export const OrderSummary = ({ subtotal, itemCount }) => {
   return (

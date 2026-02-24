@@ -11,13 +11,12 @@ const initialState = {
 
 export const initializeAuth = createAsyncThunk(
   "auth/initialize",
-  async (_, { rejectWithValue }) => {
+  async (_, { dispatch, rejectWithValue }) => {
     try {
       const { data } = await api.post("/api/token/refresh/");
-      return {
-        accessToken: data.access,
-        user: data.user || null,
-      };
+      dispatch(setAccessToken(data.access));
+      const { data: user } = await api.get("/api/user/");
+      return { accessToken: data.access, user };
     } catch (error) {
       return rejectWithValue(error.response?.data?.detail || error.message);
     }
@@ -26,13 +25,12 @@ export const initializeAuth = createAsyncThunk(
 
 export const loginUser = createAsyncThunk(
   "auth/login",
-  async ({ email, password }, { rejectWithValue }) => {
+  async ({ email, password }, { dispatch, rejectWithValue }) => {
     try {
       const { data } = await api.post("/api/token/", { email, password });
-      return {
-        accessToken: data.access,
-        user: data.user || null,
-      };
+      dispatch(setAccessToken(data.access));
+      const { data: user } = await api.get("/api/user/");
+      return { accessToken: data.access, user };
     } catch (error) {
       return rejectWithValue(error.response?.data?.detail || error.message);
     }
