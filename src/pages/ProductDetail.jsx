@@ -11,7 +11,7 @@ import {
 import { toast } from "react-toastify";
 import { formatPrice } from "../utils/price";
 
-export const ProductInfo = () => {
+export const ProductDetail = () => {
   const product = useLoaderData();
   const dispatch = useDispatch();
   const navigate = useNavigate();

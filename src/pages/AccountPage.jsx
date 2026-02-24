@@ -12,7 +12,7 @@ import {
 import { logoutUser } from "../context/authSlice";
 import { clearCart } from "../context/cartSlice";
 
-export const Profile = () => {
+export const AccountPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useLoaderData();

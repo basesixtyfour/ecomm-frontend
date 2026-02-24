@@ -22,7 +22,7 @@ const getPageFromUrl = (url) => {
   }
 };
 
-export const Products = () => {
+export const ProductCatalog = () => {
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get("q") || "";
 

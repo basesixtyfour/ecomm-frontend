@@ -8,7 +8,7 @@ import { CheckoutOrderSummary } from "../components/checkout/CheckoutOrderSummar
 import { createOrder } from "../services/api";
 import { clearCartAsync } from "../context/cartSlice";
 
-export const Checkout = () => {
+export const CheckoutPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { items, totalPrice, status } = useSelector((state) => state.cart);

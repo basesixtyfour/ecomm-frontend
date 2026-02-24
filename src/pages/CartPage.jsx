@@ -5,7 +5,7 @@ import { EmptyCartCTA } from "../components/cart/EmptyCartCTA";
 import { OrderSummary } from "../components/cart/OrderSummary";
 import { selectCartItems, selectCartItemCount, selectCartTotalPrice } from "../context/cartSlice";
 
-export const Cart = () => {
+export const CartPage = () => {
   const items = useSelector(selectCartItems);
   const itemCount = useSelector(selectCartItemCount);
   const totalPrice = useSelector(selectCartTotalPrice);

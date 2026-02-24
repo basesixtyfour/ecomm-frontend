@@ -1,18 +1,18 @@
 import { createBrowserRouter, createRoutesFromElements, Route } from "react-router-dom";
 import { Layout } from "./components/layout/Layout";
-import { Home } from "./pages/Home";
-import { ProductInfo } from "./pages/ProductInfo";
+import { LandingPage } from "./pages/LandingPage";
+import { ProductDetail } from "./pages/ProductDetail";
 import { fetchProduct, fetchOrders, fetchUserInfo } from "./services/api";
-import { Login } from "./pages/Login";
-import { Cart } from "./pages/Cart";
-import { Checkout } from "./pages/Checkout";
+import { LoginPage } from "./pages/LoginPage";
+import { CartPage } from "./pages/CartPage";
+import { CheckoutPage } from "./pages/CheckoutPage";
 import { ProtectedRoute } from "./components/layout/ProtectedRoute";
-import { Products } from "./pages/Products";
-import { Profile } from "./pages/Profile";
-import { OrderHistory } from "./pages/OrderHistory";
-import { AgentDashboard } from "./pages/AgentDashboard";
+import { ProductCatalog } from "./pages/ProductCatalog";
+import { AccountPage } from "./pages/AccountPage";
+import { OrdersPage } from "./pages/OrdersPage";
+import { SupportDashboard } from "./pages/SupportDashboard";
 import { toast } from "react-toastify";
-import { Register } from "./pages/Register";
+import { SignUpPage } from "./pages/SignUpPage";
 import { store } from "./store";
 import { initializeAuth } from "./context/authSlice";
 import { fetchCartAsync } from "./context/cartSlice";
@@ -44,14 +44,14 @@ export const router = createBrowserRouter(
           }
         }}
       >
-        <Route index element={<Home />} />
+        <Route index element={<LandingPage />} />
         <Route 
           path="products" 
-          element={<Products />}
+          element={<ProductCatalog />}
         />
         <Route 
           path="products/:productId" 
-          element={<ProductInfo />}
+          element={<ProductDetail />}
           loader={async ({ params }) => {
             try {
               const res = await fetchProduct(params.productId);
@@ -66,7 +66,7 @@ export const router = createBrowserRouter(
           path="cart" 
           element={
             <ProtectedRoute>
-              <Cart />
+              <CartPage />
             </ProtectedRoute>
           }
         />
@@ -74,7 +74,7 @@ export const router = createBrowserRouter(
           path="checkout" 
           element={
             <ProtectedRoute>
-              <Checkout />
+              <CheckoutPage />
             </ProtectedRoute>
           }
         />
@@ -82,7 +82,7 @@ export const router = createBrowserRouter(
           path="profile" 
           element={
             <ProtectedRoute>
-              <Profile />
+              <AccountPage />
             </ProtectedRoute>
           }
           loader={async () => {
@@ -99,7 +99,7 @@ export const router = createBrowserRouter(
           path="profile/orders" 
           element={
             <ProtectedRoute>
-              <OrderHistory />
+              <OrdersPage />
             </ProtectedRoute>
           }
           loader={async () => {
@@ -117,17 +117,17 @@ export const router = createBrowserRouter(
           path="agent"
           element={
             <ProtectedRoute staffOnly>
-              <AgentDashboard />
+              <SupportDashboard />
             </ProtectedRoute>
           }
         />
         <Route 
           path="login" 
-          element={<Login />}
+          element={<LoginPage />}
         />
         <Route 
           path="register" 
-          element={<Register />}
+          element={<SignUpPage />}
         />
       </Route>
     )

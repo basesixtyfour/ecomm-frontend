@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { ShoppingBag, ArrowRight, Sparkles, Truck, Shield } from "lucide-react";
 
-export const Home = () => {
+export const LandingPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Hero Section */}

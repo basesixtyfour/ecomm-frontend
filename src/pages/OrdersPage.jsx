@@ -2,7 +2,7 @@ import { Link, useLoaderData, useLocation } from "react-router-dom";
 import { Package, ArrowLeft, ShoppingBag } from "lucide-react";
 import { OrderCard } from "../components/order/OrderCard";
 
-export const OrderHistory = () => {
+export const OrdersPage = () => {
   const orders = useLoaderData() || [];
   const { state } = useLocation();
   const expandOrderId = state?.expandOrderId;

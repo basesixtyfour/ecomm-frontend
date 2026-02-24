@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { registerUser } from "../services/api";
 import { useSelector } from "react-redux";
 
-export const Register = () => {
+export const SignUpPage = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

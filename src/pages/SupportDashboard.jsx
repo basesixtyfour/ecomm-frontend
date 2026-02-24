@@ -43,7 +43,7 @@ const RoomList = ({ rooms, selectedId, onSelect, onRefresh, loading }) => (
   </div>
 );
 
-export const AgentDashboard = () => {
+export const SupportDashboard = () => {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedRoom, setSelectedRoom] = useState(null);
