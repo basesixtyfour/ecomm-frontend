@@ -10,7 +10,7 @@ import {
   Shield,
 } from "lucide-react";
 import { logoutUser } from "../context/authSlice";
-import { clearCart } from "../context/cartSlice";
+import { loadLocalCart } from "../context/cartSlice";
 
 export const AccountPage = () => {
   const dispatch = useDispatch();
@@ -19,7 +19,7 @@ export const AccountPage = () => {
 
   const handleLogout = async () => {
     await dispatch(logoutUser()).unwrap();
-    dispatch(clearCart());
+    dispatch(loadLocalCart());
     navigate("/login");
   };
 

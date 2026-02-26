@@ -64,6 +64,9 @@ export function useChat(roomId) {
         }
 
         switch (data.type) {
+          case "history":
+            setMessages(data.messages ?? []);
+            break;
           case "message":
             setMessages((prev) => [...prev, data]);
             break;

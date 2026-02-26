@@ -15,7 +15,7 @@ import { toast } from "react-toastify";
 import { SignUpPage } from "./pages/SignUpPage";
 import { store } from "./store";
 import { initializeAuth } from "./context/authSlice";
-import { fetchCartAsync } from "./context/cartSlice";
+import { fetchCartAsync, loadLocalCart } from "./context/cartSlice";
 
 let authInitPromise = null;
 
@@ -36,12 +36,20 @@ export const router = createBrowserRouter(
         loader={async () => {
           try {
             await ensureAuth();
-            await store.dispatch(fetchCartAsync()).unwrap();
-            return null;
-          } catch (err) {
-            toast.error(err?.message || "Failed to load profile", { toastId: "profile:loader:exception" });
-            return null;
+          } catch {
+            // auth init failed — guest user
           }
+          try {
+            const { auth } = store.getState();
+            if (auth.isAuthenticated) {
+              await store.dispatch(fetchCartAsync()).unwrap();
+            } else {
+              store.dispatch(loadLocalCart());
+            }
+          } catch (err) {
+            store.dispatch(loadLocalCart());
+          }
+          return null;
         }}
       >
         <Route index element={<LandingPage />} />
@@ -64,11 +72,7 @@ export const router = createBrowserRouter(
         />
         <Route 
           path="cart" 
-          element={
-            <ProtectedRoute>
-              <CartPage />
-            </ProtectedRoute>
-          }
+          element={<CartPage />}
         />
         <Route 
           path="checkout" 

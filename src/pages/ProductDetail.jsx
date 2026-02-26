@@ -1,22 +1,16 @@
 import { useState } from "react";
-import { useLoaderData, Link, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useLoaderData, Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { ShoppingCart, Tag, Plus, Minus, Trash2 } from "lucide-react";
-import {
-  addCartItemAsync,
-  updateCartItemAsync,
-  deleteCartItemAsync,
-  selectCartItems,
-} from "../context/cartSlice";
+import { selectCartItems } from "../context/cartSlice";
+import { useCartActions } from "../hooks/useCartActions";
 import { toast } from "react-toastify";
 import { formatPrice } from "../utils/price";
 
 export const ProductDetail = () => {
   const product = useLoaderData();
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
   const items = useSelector(selectCartItems);
-  const { isAuthenticated } = useSelector((state) => state.auth);
+  const { addItem, updateItem, removeItem } = useCartActions();
   const [isUpdating, setIsUpdating] = useState(false);
 
   if (!product) return null;
@@ -25,20 +19,14 @@ export const ProductDetail = () => {
   const currentQuantity = cartItem?.quantity || 0;
 
   const handleCartUpdate = async (newQuantity) => {
-    if (!isAuthenticated) {
-      toast.info("Please login to update your cart", { toastId: "cart:auth" });
-      navigate("/login");
-      return;
-    }
-
     setIsUpdating(true);
     try {
       if (newQuantity <= 0 && cartItem) {
-        await dispatch(deleteCartItemAsync(cartItem.id)).unwrap();
+        await removeItem({ itemId: cartItem.id, productId: product.id });
       } else if (cartItem) {
-        await dispatch(updateCartItemAsync({ itemId: cartItem.id, quantity: newQuantity })).unwrap();
+        await updateItem({ itemId: cartItem.id, productId: product.id, quantity: newQuantity });
       } else {
-        await dispatch(addCartItemAsync({ productId: product.id, quantity: newQuantity })).unwrap();
+        await addItem(product, newQuantity);
       }
     } catch (err) {
       toast.error(err || "Failed to update cart", { toastId: "cart:update:exception" });

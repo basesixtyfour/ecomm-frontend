@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchCart, addCartItem, updateCartItem, deleteCartItem, clearCartApi } from "../services/api";
 import { logoutUser } from "./authSlice";
 import { toast } from "react-toastify";
+import { getLocalCart, saveLocalCart, clearLocalCart, calcTotal } from "../utils/localCart";
 
 const initialState = {
   cartId: null,
@@ -76,6 +77,24 @@ export const clearCartAsync = createAsyncThunk(
   }
 );
 
+export const mergeCartAsync = createAsyncThunk(
+  "cart/merge",
+  async (_, { rejectWithValue }) => {
+    try {
+      const localItems = getLocalCart();
+      for (const item of localItems) {
+        await addCartItem(item.product.id, item.quantity);
+      }
+      clearLocalCart();
+      return await fetchCart();
+    } catch (err) {
+      const msg = err?.message || "Failed to merge cart";
+      toast.error(msg, { toastId: "cart:merge:error" });
+      return rejectWithValue(msg);
+    }
+  }
+);
+
 const applyCart = (state, action) => {
   const { id, items, total_price } = action.payload;
   state.cartId = id;
@@ -100,6 +119,50 @@ export const cartSlice = createSlice({
   initialState,
   reducers: {
     clearCart: () => initialState,
+    loadLocalCart: (state) => {
+      const items = getLocalCart();
+      state.cartId = "local";
+      state.items = items;
+      state.totalPrice = calcTotal(items);
+      state.status = "ready";
+      state.error = null;
+    },
+    addLocalItem: (state, action) => {
+      const { product, quantity = 1 } = action.payload;
+      const existing = state.items.find((i) => i.product.id === product.id);
+      if (existing) {
+        existing.quantity += quantity;
+      } else {
+        state.items.push({
+          id: `local_${product.id}`,
+          quantity,
+          product: {
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            description: product.description,
+            image: product.image,
+          },
+        });
+      }
+      state.totalPrice = calcTotal(state.items);
+      state.cartId = "local";
+      state.status = "ready";
+      saveLocalCart(state.items);
+    },
+    updateLocalItem: (state, action) => {
+      const { productId, quantity } = action.payload;
+      const item = state.items.find((i) => i.product.id === productId);
+      if (item) item.quantity = quantity;
+      state.totalPrice = calcTotal(state.items);
+      saveLocalCart(state.items);
+    },
+    removeLocalItem: (state, action) => {
+      const { productId } = action.payload;
+      state.items = state.items.filter((i) => i.product.id !== productId);
+      state.totalPrice = calcTotal(state.items);
+      saveLocalCart(state.items);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -123,11 +186,15 @@ export const cartSlice = createSlice({
       .addCase(clearCartAsync.fulfilled, applyCart)
       .addCase(clearCartAsync.rejected, setError)
 
+      .addCase(mergeCartAsync.pending, setLoading)
+      .addCase(mergeCartAsync.fulfilled, applyCart)
+      .addCase(mergeCartAsync.rejected, setError)
+
       .addCase(logoutUser.fulfilled, () => initialState);
   },
 });
 
-export const { clearCart } = cartSlice.actions;
+export const { clearCart, loadLocalCart, addLocalItem, updateLocalItem, removeLocalItem } = cartSlice.actions;
 
 export const selectCartItems = (state) => state.cart.items;
 export const selectCartStatus = (state) => state.cart.status;

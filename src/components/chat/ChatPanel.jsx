@@ -23,15 +23,15 @@ export const ChatPanel = ({
     if (!input.trim()) return;
     onSend(input);
     setInput("");
-    onTyping?.(false);
+    onTyping(false);
     clearTimeout(typingTimeout.current);
   };
 
   const handleInputChange = (e) => {
     setInput(e.target.value);
-    onTyping?.(true);
+    onTyping(true);
     clearTimeout(typingTimeout.current);
-    typingTimeout.current = setTimeout(() => onTyping?.(false), 2000);
+    typingTimeout.current = setTimeout(() => onTyping(false), 2000);
   };
 
   const handleKeyDown = (e) => {

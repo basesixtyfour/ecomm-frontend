@@ -9,6 +9,7 @@ export const CartPage = () => {
   const items = useSelector(selectCartItems);
   const itemCount = useSelector(selectCartItemCount);
   const totalPrice = useSelector(selectCartTotalPrice);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -40,7 +41,7 @@ export const CartPage = () => {
             </div>
 
             <div className="lg:col-span-1">
-              <OrderSummary subtotal={totalPrice} itemCount={itemCount} />
+              <OrderSummary subtotal={totalPrice} itemCount={itemCount} isGuest={!isAuthenticated} />
             </div>
           </div>
         )}

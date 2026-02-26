@@ -1,22 +1,21 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import { Package, Plus, Minus, Trash2 } from "lucide-react";
-import { updateCartItemAsync, deleteCartItemAsync } from "../../context/cartSlice";
+import { useCartActions } from "../../hooks/useCartActions";
 import { formatPrice } from "../../utils/price";
 import { toast } from "react-toastify";
 
 export const CartItem = ({ id, quantity, product }) => {
-  const dispatch = useDispatch();
+  const { updateItem, removeItem } = useCartActions();
   const [isUpdating, setIsUpdating] = useState(false);
 
   const handleCartUpdate = async (newQuantity) => {
     setIsUpdating(true);
     try {
       if (newQuantity <= 0) {
-        await dispatch(deleteCartItemAsync(id)).unwrap();
+        await removeItem({ itemId: id, productId: product?.id });
       } else {
-        await dispatch(updateCartItemAsync({ itemId: id, quantity: newQuantity })).unwrap();
+        await updateItem({ itemId: id, productId: product?.id, quantity: newQuantity });
       }
     } catch (err) {
       toast.error(err || "Failed to update cart", { toastId: "cart:update:exception" });
