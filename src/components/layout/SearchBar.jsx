@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { fetchProducts } from "../../services/api";
 import { toast } from "react-toastify";
+import { mixpanel } from "../../lib/mixpanel";
 
 export const SearchBar = ({ className }) => {
   const [value, setValue] = useState("");
@@ -11,7 +12,7 @@ export const SearchBar = ({ className }) => {
   const debounceRef = useRef(null);
   const latestTermRef = useRef("");
   const navigate = useNavigate();
-  const { isAuthenticated } = useSelector((state) => state.auth);
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     return () => {
@@ -42,6 +43,12 @@ export const SearchBar = ({ className }) => {
           setResults(res.results);
         } catch (err) {
           if (latestTermRef.current !== term) return;
+          mixpanel.track("Error", {
+            error_type: "server",
+            error_message: err?.message || "Search failed",
+            page_url: window.location.href,
+            user_id: user?.id,
+          });
           toast.error(err?.message || "Search failed", { toastId: "search:exception" });
           setResults([]);
         }
@@ -54,6 +61,11 @@ export const SearchBar = ({ className }) => {
   const handleSearch = () => {
     const term = value.trim();
     if (term) {
+      mixpanel.track("Search", {
+        search_query: term,
+        user_id: user?.id,
+        results_count: results.length,
+      });
       setResults([]);
       navigate(`/products?search=${encodeURIComponent(term)}`);
     }

@@ -7,6 +7,7 @@ const initialState = {
   isAuthenticated: false,
   isLoading: true,
   error: null,
+  authSource: null, // 'local' | 'auth0' | null
 };
 
 export const initializeAuth = createAsyncThunk(
@@ -16,7 +17,8 @@ export const initializeAuth = createAsyncThunk(
       const { data } = await api.post("/api/token/refresh/");
       dispatch(setAccessToken(data.access));
       const { data: user } = await api.get("/api/user/");
-      return { accessToken: data.access, user };
+      const source = user.auth0_sub ? "auth0" : "local";
+      return { accessToken: data.access, user, source };
     } catch (error) {
       return rejectWithValue(error.response?.data?.detail || error.message);
     }
@@ -39,10 +41,10 @@ export const loginUser = createAsyncThunk(
 
 export const logoutUser = createAsyncThunk(
   "auth/logout",
-  async (_, { rejectWithValue }) => {
+  async (payload, { rejectWithValue }) => {
     try {
-      await api.post("/api/logout/");
-      return null;
+      const { data } = await api.post("/api/logout/", payload || {});
+      return data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.detail || error.message);
     }
@@ -61,6 +63,7 @@ export const authSlice = createSlice({
       state.accessToken = null;
       state.user = null;
       state.isAuthenticated = false;
+      state.authSource = null;
     },
     setUser: (state, action) => {
       state.user = action.payload;
@@ -76,6 +79,7 @@ export const authSlice = createSlice({
         state.accessToken = action.payload.accessToken;
         state.user = action.payload.user;
         state.isAuthenticated = true;
+        state.authSource = action.payload.source || "local";
         state.isLoading = false;
         state.error = null;
       })
@@ -94,6 +98,7 @@ export const authSlice = createSlice({
         state.accessToken = action.payload.accessToken;
         state.user = action.payload.user;
         state.isAuthenticated = true;
+        state.authSource = "local";
         state.isLoading = false;
         state.error = null;
       })
@@ -105,6 +110,7 @@ export const authSlice = createSlice({
         state.accessToken = null;
         state.user = null;
         state.isAuthenticated = false;
+        state.authSource = null;
         state.isLoading = false;
         state.error = null;
       });

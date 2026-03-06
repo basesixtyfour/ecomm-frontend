@@ -3,6 +3,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { registerUser } from "../services/api";
 import { useSelector } from "react-redux";
+import { mixpanel } from "../lib/mixpanel";
 
 export const SignUpPage = () => {
   const [username, setUsername] = useState("");
@@ -32,12 +33,23 @@ export const SignUpPage = () => {
     }
     setLoading(true);
     try {
-      await registerUser(username, email, password);
+      const data = await registerUser(username, email, password);
+      mixpanel.track("Sign Up", {
+        user_id: data?.id,
+        email,
+        signup_method: "email",
+      });
       toast.success("Registration successful! Please login to continue", { toastId: "register:success" });
       navigate("/login");
     } catch (err) {
-      setError(err?.message || "Registration failed");
-      toast.error(err?.message || "Registration failed", { toastId: "register:exception" });
+      const msg = err?.message || "Registration failed";
+      mixpanel.track("Error", {
+        error_type: "validation",
+        error_message: msg,
+        page_url: window.location.href,
+      });
+      setError(msg);
+      toast.error(msg, { toastId: "register:exception" });
     } finally {
       setLoading(false);
     }

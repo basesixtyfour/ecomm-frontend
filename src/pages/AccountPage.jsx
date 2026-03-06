@@ -1,4 +1,4 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useLoaderData } from "react-router-dom";
 import {
   User,
@@ -16,10 +16,18 @@ export const AccountPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useLoaderData();
+  const authSource = useSelector((state) => state.auth.authSource);
 
   const handleLogout = async () => {
-    await dispatch(logoutUser()).unwrap();
+    const result = await dispatch(
+      logoutUser({ auth0: authSource === "auth0" })
+    ).unwrap();
     dispatch(loadLocalCart());
+
+    if (result?.auth0_logout_url) {
+      window.location.href = result.auth0_logout_url;
+      return;
+    }
     navigate("/login");
   };
 

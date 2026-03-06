@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -7,11 +7,13 @@ import { PaymentMethod } from "../components/checkout/PaymentMethod";
 import { CheckoutOrderSummary } from "../components/checkout/CheckoutOrderSummary";
 import { createOrder } from "../services/api";
 import { clearCartAsync } from "../context/cartSlice";
+import { mixpanel } from "../lib/mixpanel";
 
 export const CheckoutPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { items, totalPrice, status } = useSelector((state) => state.cart);
+  const user = useSelector((state) => state.auth.user);
   
   const [form, setForm] = useState({
     fullName: "",
@@ -59,10 +61,26 @@ export const CheckoutPage = () => {
         })),
       };
       const order = await createOrder(orderData);
+      mixpanel.track("Purchase", {
+        user_id: user?.id,
+        transaction_id: order.id,
+        revenue: order.total_price ?? totalPrice,
+        currency: "USD",
+      });
+      mixpanel.track("Conversion", {
+        "Conversion Type": "purchase",
+        "Conversion Value": order.total_price ?? totalPrice,
+      });
       await dispatch(clearCartAsync()).unwrap();
       toast.success("Order placed successfully!");
       navigate("/profile/orders", { state: { expandOrderId: order.id } });
     } catch (err) {
+      mixpanel.track("Error", {
+        error_type: "server",
+        error_message: err?.message || "Failed to place order",
+        page_url: window.location.href,
+        user_id: user?.id,
+      });
       toast.error(err?.message || "Failed to place order");
     }
   };

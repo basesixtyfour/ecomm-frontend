@@ -14,12 +14,17 @@ import { SupportDashboard } from "./pages/SupportDashboard";
 import { toast } from "react-toastify";
 import { SignUpPage } from "./pages/SignUpPage";
 import { store } from "./store";
-import { initializeAuth } from "./context/authSlice";
-import { fetchCartAsync, loadLocalCart } from "./context/cartSlice";
+import { fetchCartAsync, loadLocalCart, mergeCartAsync } from "./context/cartSlice";
+import { initializeAuth, clearAccessToken } from "./context/authSlice";
+import { getLocalCart } from "./utils/localCart";
 
 let authInitPromise = null;
 
-const ensureAuth = () => {
+export const ensureAuth = () => {
+  const { auth } = store.getState();
+  if (auth.isAuthenticated && auth.user) {
+    return Promise.resolve();
+  }
   if (!authInitPromise) {
     authInitPromise = store.dispatch(initializeAuth()).unwrap().finally(() => {
       authInitPromise = null;
@@ -27,6 +32,12 @@ const ensureAuth = () => {
   }
   return authInitPromise;
 };
+
+export const RootLoaderFallback = () => (
+  <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="animate-pulse text-gray-500">Loading...</div>
+  </div>
+);
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
@@ -36,17 +47,18 @@ export const router = createBrowserRouter(
         loader={async () => {
           try {
             await ensureAuth();
-          } catch {
-            // auth init failed — guest user
-          }
-          try {
             const { auth } = store.getState();
+            const localItems = getLocalCart();
+            if (localItems.length > 0) {
+              await store.dispatch(mergeCartAsync()).unwrap();
+            }
             if (auth.isAuthenticated) {
               await store.dispatch(fetchCartAsync()).unwrap();
             } else {
               store.dispatch(loadLocalCart());
             }
-          } catch (err) {
+          } catch {
+            store.dispatch(clearAccessToken());
             store.dispatch(loadLocalCart());
           }
           return null;
@@ -92,7 +104,8 @@ export const router = createBrowserRouter(
           loader={async () => {
             try {
               await ensureAuth();
-              return await fetchUserInfo();
+              const { auth } = store.getState();
+              return auth.user ?? (await fetchUserInfo());
             } catch (err) {
               toast.error(err?.message || "Failed to load profile", { toastId: "profile:loader:exception" });
               return null;
