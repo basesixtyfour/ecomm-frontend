@@ -4,7 +4,7 @@ import { ToastContainer } from "react-toastify";
 
 export const App = () => (
   <>
-    <RouterProvider router={router} fallbackElement={<RootLoaderFallback />} />
+    <RouterProvider router={router} />
     <ToastContainer position="top-right" autoClose={4000} newestOnTop />
   </>
 );

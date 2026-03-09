@@ -63,6 +63,7 @@ export const router = createBrowserRouter(
           }
           return null;
         }}
+        HydrateFallback = {RootLoaderFallback}
       >
         <Route index element={<LandingPage />} />
         <Route 
