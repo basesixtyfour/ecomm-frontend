@@ -3,7 +3,7 @@ import { store } from "../store";
 import { setAccessToken, clearAccessToken } from "../context/authSlice";
 
 export const api = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000",
   withCredentials: true,
 });
 
@@ -197,7 +197,7 @@ export const createOrder = async (orderData) => {
   }
 };
 
-export const CHAT_WS_URL = "ws://localhost:8001";
+export const CHAT_WS_URL = import.meta.env.VITE_CHAT_WS_URL || "ws://localhost:8001";
 
 export const createChatRoom = async () => {
   try {
