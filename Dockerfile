@@ -16,6 +16,7 @@ COPY . .
 # Build args become VITE_ env vars at build time
 ARG VITE_API_URL
 ARG VITE_CHAT_WS_URL
+ARG VITE_AUTH0_ENABLED
 RUN pnpm build
 
 # ── Production serve stage ───────────────────────────────────────────────────
