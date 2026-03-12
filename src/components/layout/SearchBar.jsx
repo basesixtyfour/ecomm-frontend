@@ -12,7 +12,7 @@ export const SearchBar = ({ className }) => {
   const debounceRef = useRef(null);
   const latestTermRef = useRef("");
   const navigate = useNavigate();
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     return () => {
@@ -23,12 +23,6 @@ export const SearchBar = ({ className }) => {
   const handleChange = (e) => {
     const nextValue = e.target.value;
     setValue(nextValue);
-
-    if (!isAuthenticated) {
-      toast.info("Please login to search products", { toastId: "search:auth" });
-      navigate("/login");
-      return;
-    }
 
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
