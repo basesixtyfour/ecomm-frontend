@@ -7,33 +7,35 @@ import { ChatPanel } from "../components/chat/ChatPanel";
 const POLL_INTERVAL_MS = 10_000;
 
 const RoomList = ({ rooms, selectedId, onSelect, onRefresh, loading }) => (
-  <div className="flex flex-col h-full border-r border-gray-200">
-    <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
-      <h2 className="font-semibold text-gray-800">Active Chats</h2>
+  <div className="flex h-full flex-col border-r-2 border-black">
+    <div className="flex items-center justify-between border-b-2 border-black px-4 py-3">
+      <h2 className="text-xs font-black uppercase tracking-[0.18em] text-black">
+        Active chats
+      </h2>
       <button
         onClick={onRefresh}
         disabled={loading}
-        className="p-1.5 rounded hover:bg-gray-100 disabled:opacity-40 cursor-pointer"
+        className="cursor-pointer border-2 border-black bg-white p-1.5 text-black hover:bg-black hover:text-white disabled:opacity-40"
         title="Refresh"
       >
         <RefreshCw className={`w-4 h-4 text-gray-500 ${loading ? "animate-spin" : ""}`} />
       </button>
     </div>
 
-    <div className="flex-1 overflow-y-auto">
+    <div className="flex-1 overflow-y-auto bg-white">
       {rooms.length === 0 && (
-        <p className="text-sm text-gray-400 text-center py-8">No active chats</p>
+        <p className="py-8 text-center text-sm text-neutral-700">No active chats</p>
       )}
       {rooms.map((room) => (
         <button
           key={room.id}
           onClick={() => onSelect(room)}
-          className={`w-full text-left px-4 py-3 border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${
-            selectedId === room.id ? "bg-gray-100" : ""
+          className={`w-full cursor-pointer border-b-2 border-black px-4 py-3 text-left hover:bg-neutral-100 ${
+            selectedId === room.id ? "bg-neutral-100" : ""
           }`}
         >
-          <p className="font-medium text-sm text-gray-800">{room.username}</p>
-          <p className="text-xs text-gray-400">
+          <p className="text-sm font-semibold text-black">{room.username}</p>
+          <p className="text-xs text-neutral-700">
             Room #{room.id} &middot;{" "}
             {new Date(room.created_at).toLocaleString()}
           </p>
@@ -96,7 +98,7 @@ export const SupportDashboard = () => {
   }, [closeRoom]);
 
   return (
-    <div className="h-[calc(100vh-52px)] flex bg-white">
+    <div className="flex h-[calc(100vh-52px)] bg-white">
       <div className="w-72 flex-shrink-0">
         <RoomList
           rooms={rooms}
@@ -107,7 +109,7 @@ export const SupportDashboard = () => {
         />
       </div>
 
-      <div className="flex-1">
+      <div className="flex-1 border-l-2 border-black">
         {selectedRoom ? (
           <ChatPanel
             messages={messages}
@@ -120,7 +122,7 @@ export const SupportDashboard = () => {
             onClose={handleCloseRoom}
           />
         ) : (
-          <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+          <div className="flex h-full items-center justify-center text-sm text-neutral-700">
             Select a chat from the sidebar
           </div>
         )}

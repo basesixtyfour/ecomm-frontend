@@ -86,23 +86,23 @@ export const CheckoutPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="max-w-5xl mx-auto px-6 py-10 md:py-14">
-        <div className="flex items-start justify-between gap-6 mb-8">
+    <div className="min-h-screen bg-white">
+      <div className="mx-auto max-w-5xl px-6 py-10 md:py-14">
+        <div className="mb-8 flex items-start justify-between gap-6 border-b-2 border-black pb-4">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+            <h1 className="text-2xl font-black uppercase tracking-tight text-black md:text-3xl">
               Checkout
             </h1>
-            <p className="text-gray-600 text-sm mt-1">
+            <p className="mt-1 text-sm text-neutral-800">
               Review your order and enter delivery details ({itemCount}{" "}
               {itemCount === 1 ? "item" : "items"})
             </p>
           </div>
           <Link
             to="/cart"
-            className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+            className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-800 hover:text-black"
           >
-            Back to cart
+            BACK TO CART
           </Link>
         </div>
 

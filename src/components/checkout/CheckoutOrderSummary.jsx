@@ -8,43 +8,45 @@ export const CheckoutOrderSummary = ({
   placeOrder,
 }) => {
   return (
-    <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6 sticky top-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-900">Order summary</h2>
-        <div className="inline-flex items-center gap-2 text-xs font-medium text-gray-600">
-          <ShieldCheck className="w-4 h-4" />
-          Protected route
+    <div className="sticky top-6 border-2 border-black bg-white p-6 shadow-[var(--shadow-hard-md)]">
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-sm font-black uppercase tracking-[0.18em] text-black">
+          ORDER SUMMARY
+        </h2>
+        <div className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-800">
+          <ShieldCheck className="h-4 w-4" />
+          DUMMY CHECKOUT
         </div>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-3 text-sm text-neutral-800">
         {items.map(({ id, product, quantity }) => (
           <div key={id} className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <div className="text-sm font-medium text-gray-900 truncate">
+              <div className="truncate font-semibold uppercase tracking-tight text-black">
                 {product?.name ?? "Product"}
               </div>
-              <div className="text-xs text-gray-600">Qty: {quantity}</div>
+              <div className="text-xs text-neutral-700">QTY: {quantity}</div>
             </div>
-            <div className="text-sm font-semibold text-gray-900 whitespace-nowrap">
-              {formatPrice(subtotal)}
+            <div className="whitespace-nowrap text-sm font-black text-black">
+              {formatPrice((product?.price ?? 0) * quantity)}
             </div>
           </div>
         ))}
       </div>
 
-      <div className="border-t border-gray-200 mt-4 pt-4 space-y-2 text-gray-700">
+      <div className="mt-4 space-y-2 border-t-2 border-black pt-4 text-sm text-neutral-800">
         <div className="flex justify-between text-sm">
-          <span>Subtotal</span>
-          <span className="font-medium">{formatPrice(subtotal)}</span>
+          <span>SUBTOTAL</span>
+          <span className="font-semibold">{formatPrice(subtotal)}</span>
         </div>
         <div className="flex justify-between text-sm">
-          <span>Shipping</span>
-          <span className="font-medium">Free</span>
+          <span>SHIPPING</span>
+          <span className="font-semibold">FREE</span>
         </div>
-        <div className="flex justify-between items-center pt-2 border-t border-gray-100">
-          <span className="font-semibold text-gray-900">Total</span>
-          <span className="text-xl font-bold text-gray-900">
+        <div className="flex items-center justify-between border-t border-black pt-2">
+          <span className="font-semibold text-black">TOTAL</span>
+          <span className="text-xl font-black text-black">
             {formatPrice(subtotal)}
           </span>
         </div>
@@ -55,16 +57,16 @@ export const CheckoutOrderSummary = ({
         onClick={placeOrder}
         disabled={!canPlaceOrder}
         className={[
-          "w-full mt-6 flex items-center justify-center gap-2 font-semibold py-3.5 px-4 rounded-lg transition-colors duration-200 shadow-md",
+          "mt-6 flex w-full items-center justify-center gap-2 border-2 border-black py-3.5 px-4 text-xs font-black uppercase tracking-[0.18em] transition-transform",
           canPlaceOrder
-            ? "bg-gray-500 hover:bg-gray-600 text-white hover:shadow-lg"
-            : "bg-gray-200 text-gray-500 cursor-not-allowed shadow-none",
+            ? "bg-black text-white shadow-[var(--shadow-hard-md)] hover:bg-white hover:text-black"
+            : "bg-neutral-200 text-neutral-600 cursor-not-allowed",
         ].join(" ")}
       >
-        Place order (dummy)
+        PLACE ORDER (DUMMY)
       </button>
 
-      <p className="mt-3 text-xs text-gray-500">
+      <p className="mt-3 text-xs text-neutral-700">
         This is a placeholder checkout. No order is saved and no payment is
         processed.
       </p>

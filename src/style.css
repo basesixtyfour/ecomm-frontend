@@ -1,1 +1,45 @@
 @import "tailwindcss";
+
+@theme {
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+
+  /* Brutalist, high-contrast palette */
+  --color-primary: #000000;
+  --color-primary-foreground: #ffffff;
+
+  --color-background: #ffffff;
+  --color-foreground: #000000;
+
+  --color-muted: #e5e7eb;
+  --color-muted-foreground: #111827;
+
+  /* Aggressive accent for critical actions (e.g. checkout) */
+  --color-accent: #39ff14;
+  --color-accent-foreground: #000000;
+
+  --color-destructive: #ff1a1a;
+  --color-destructive-foreground: #ffffff;
+
+  /* Hard brutalist shadows */
+  --shadow-hard-lg: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+  --shadow-hard-md: 3px 3px 0px 0px rgba(0, 0, 0, 1);
+}
+
+:root {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  color: var(--color-foreground);
+  background-color: var(--color-background);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}

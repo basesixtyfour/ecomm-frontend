@@ -36,49 +36,53 @@ export const ProductDetail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-6">
-      <div className="max-w-2xl mx-auto space-y-6">
+    <div className="min-h-screen bg-white px-6 py-8">
+      <div className="mx-auto max-w-2xl space-y-6">
         <Link
           to="/products"
-          className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+          className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-neutral-800 hover:text-black"
         >
-          ← Back to products
+          ← BACK TO PRODUCTS
         </Link>
 
-        <article className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+        <article className="border-2 border-black bg-white">
           {product.image ? (
             <img
               src={product.image}
               alt={product.name}
-              className="w-full h-64 object-contain bg-gray-50"
+              className="h-64 w-full border-b-2 border-black bg-neutral-100 object-contain"
             />
           ) : (
-            <div className="w-full h-64 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-              <ShoppingCart className="w-24 h-24 text-gray-400" />
+            <div className="flex h-64 w-full items-center justify-center border-b-2 border-black bg-neutral-100">
+              <ShoppingCart className="h-24 w-24 text-neutral-500" />
             </div>
           )}
 
           <div className="p-6 md:p-8">
-            <h1 className="text-2xl font-bold text-gray-900 mb-3">{product.name}</h1>
+            <h1 className="mb-3 text-2xl font-black uppercase tracking-tight text-black">
+              {product.name}
+            </h1>
 
-            <p className="text-3xl font-bold text-gray-900 mb-4">
+            <p className="mb-4 text-3xl font-black text-black">
               {formatPrice(product.price)}
             </p>
 
-            <p className="text-gray-600 text-base leading-relaxed mb-6">
+            <p className="mb-6 text-base leading-relaxed text-neutral-800">
               {product.description}
             </p>
 
             {product.categories && product.categories.length > 0 && (
               <div className="mb-6">
-                <span className="text-sm font-medium text-gray-500 mb-2 block">Categories</span>
+                <span className="mb-2 block text-xs font-black uppercase tracking-[0.2em] text-black">
+                  CATEGORIES
+                </span>
                 <div className="flex flex-wrap gap-2">
                   {product.categories.map((category) => (
                     <span
                       key={category.id}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-full"
+                      className="inline-flex items-center gap-1.5 border-2 border-black bg-white px-3 py-1.5 text-xs font-semibold uppercase"
                     >
-                      <Tag className="w-3.5 h-3.5" />
+                      <Tag className="h-3.5 w-3.5" />
                       {category.name}
                     </span>
                   ))}
@@ -87,59 +91,59 @@ export const ProductDetail = () => {
             )}
 
             {currentQuantity > 0 ? (
-              <div className="flex flex-col sm:flex-row gap-3">
-                <div className="flex-1 flex items-center gap-3 bg-gray-100 rounded-lg p-1">
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <div className="flex flex-1 items-center gap-3 border-2 border-black bg-white p-1">
                   <button
                     type="button"
                     onClick={() => handleCartUpdate(currentQuantity - 1)}
                     disabled={isUpdating}
-                    className="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="flex h-10 w-10 items-center justify-center border-r-2 border-black bg-white hover:bg-black hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
                     title={currentQuantity === 1 ? "Remove from cart" : "Decrease quantity"}
                   >
                     {currentQuantity === 1 ? (
-                      <Trash2 className="w-5 h-5 text-red-600" />
+                      <Trash2 className="h-5 w-5 text-red-600" />
                     ) : (
-                      <Minus className="w-5 h-5 text-gray-700" />
+                      <Minus className="h-5 w-5 text-black" />
                     )}
                   </button>
-                  <span className="flex-1 text-center font-semibold text-gray-900">
+                  <span className="flex-1 text-center font-semibold text-black">
                     {currentQuantity}
                   </span>
                   <button
                     type="button"
                     onClick={() => handleCartUpdate(currentQuantity + 1)}
                     disabled={isUpdating}
-                    className="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="flex h-10 w-10 items-center justify-center border-l-2 border-black bg-white hover:bg-black hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
                     title="Increase quantity"
                   >
-                    <Plus className="w-5 h-5 text-gray-700" />
+                    <Plus className="h-5 w-5 text-black" />
                   </button>
                 </div>
                 <Link
                   to="/cart"
-                  className="inline-flex items-center justify-center gap-2 border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white font-semibold py-3 px-5 rounded-lg transition-colors"
+                  className="inline-flex items-center justify-center gap-2 border-2 border-black bg-white px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-black hover:bg-black hover:text-white"
                 >
-                  <ShoppingCart className="w-5 h-5" />
-                  View cart
+                  <ShoppingCart className="h-5 w-5" />
+                  VIEW CART
                 </Link>
               </div>
             ) : (
-              <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex flex-col gap-3 sm:flex-row">
                 <button
                   type="button"
                   onClick={() => handleCartUpdate(1)}
                   disabled={isUpdating}
-                  className="flex-1 inline-flex items-center justify-center gap-2 bg-gray-900 hover:bg-gray-800 disabled:bg-gray-400 text-white font-semibold py-3 px-5 rounded-lg transition-colors"
+                  className="flex-1 inline-flex items-center justify-center gap-2 border-2 border-black bg-black px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-white disabled:opacity-60"
                 >
-                  <Plus className="w-5 h-5" />
-                  {isUpdating ? "Adding…" : "Add to cart"}
+                  <Plus className="h-5 w-5" />
+                  {isUpdating ? "ADDING…" : "ADD TO CART"}
                 </button>
                 <Link
                   to="/cart"
-                  className="inline-flex items-center justify-center gap-2 border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white font-semibold py-3 px-5 rounded-lg transition-colors"
+                  className="inline-flex items-center justify-center gap-2 border-2 border-black bg-white px-5 py-3 text-xs font-black uppercase tracking-[0.18em] text-black hover:bg-black hover:text-white"
                 >
-                  <ShoppingCart className="w-5 h-5" />
-                  View cart
+                  <ShoppingCart className="h-5 w-5" />
+                  VIEW CART
                 </Link>
               </div>
             )}

@@ -35,73 +35,80 @@ export const ProductSidebar = ({
   };
 
   return (
-    <aside className="w-64 bg-white rounded-lg shadow-md border border-gray-200 p-5 h-fit sticky top-8">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-          <Filter className="w-5 h-5" />
-          Filters
+    <aside className="sticky top-8 h-fit w-64 border-2 border-black bg-white p-5 shadow-[var(--shadow-hard-md)]">
+      <div className="mb-5 flex items-center justify-between">
+        <h2 className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.18em] text-black">
+          <Filter className="h-4 w-4" />
+          FILTERS
         </h2>
         {hasActiveFilters && (
           <button
             onClick={onClearFilters}
-            className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1 transition-colors"
+            className="flex items-center gap-1 text-xs font-semibold uppercase tracking-[0.16em] text-neutral-800 transition-colors hover:text-black"
           >
-            <X className="w-4 h-4" />
-            Clear
+            <X className="h-3 w-3" />
+            CLEAR
           </button>
         )}
       </div>
 
       <div className="mb-6">
-        <h3 className="text-sm font-medium text-gray-700 mb-3">Category</h3>
-        <div className="max-h-48 overflow-y-auto pr-1">
-          <div className="space-y-2">
-            {CATEGORIES.map((category) => (
-              <label
-                key={category}
-                className="flex items-center gap-3 cursor-pointer group"
-              >
-                <input
-                  type="checkbox"
-                  checked={selectedCategories.includes(category)}
-                  onChange={() => handleCategoryToggle(category)}
-                  className="w-4 h-4 text-gray-600 border-gray-300 rounded focus:ring-gray-500 cursor-pointer"
-                />
-                <span className="text-sm text-gray-600 group-hover:text-gray-900 transition-colors">
-                  {category}
-                </span>
-              </label>
-            ))}
+        <h3 className="mb-3 text-xs font-black uppercase tracking-[0.2em] text-black">
+          CATEGORIES
+        </h3>
+        <div className="max-h-48 space-y-2 overflow-y-auto pr-1">
+          <div className="flex flex-wrap gap-2">
+            {CATEGORIES.map((category) => {
+              const active = selectedCategories.includes(category);
+              return (
+                <button
+                  key={category}
+                  type="button"
+                  onClick={() => handleCategoryToggle(category)}
+                  className={[
+                    "inline-flex items-center gap-1.5 border-2 border-black px-3 py-1.5 text-xs font-semibold uppercase transition-transform",
+                    active
+                      ? "bg-black text-white translate-x-0.5 translate-y-0.5"
+                      : "bg-white text-neutral-800 hover:bg-black hover:text-white",
+                  ].join(" ")}
+                >
+                  <span className="truncate">{category}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
 
-      <div className="border-t border-gray-200 my-4" />
+      <div className="my-4 border-t-2 border-black" />
 
       <div>
-        <h3 className="text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
-          <ArrowUpDown className="w-4 h-4" />
-          Sort By
+        <h3 className="mb-3 flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-black">
+          <ArrowUpDown className="h-4 w-4" />
+          SORT
         </h3>
-        <div className="space-y-2">
-          {SORT_OPTIONS.map((option) => (
-            <label
-              key={option.value}
-              className="flex items-center gap-3 cursor-pointer group"
-            >
-              <input
-                type="radio"
-                name="sort"
-                value={option.value}
-                checked={sortBy === option.value}
-                onChange={(e) => onSortChange(e.target.value)}
-                className="w-4 h-4 text-gray-600 border-gray-300 focus:ring-gray-500 cursor-pointer"
-              />
-              <span className="text-sm text-gray-600 group-hover:text-gray-900 transition-colors">
-                {option.label}
-              </span>
-            </label>
-          ))}
+        <div className="space-y-1">
+          {SORT_OPTIONS.map((option) => {
+            const active = sortBy === option.value;
+            return (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => onSortChange(option.value)}
+                className={[
+                  "flex w-full items-center justify-between border-2 border-black px-3 py-2 text-xs font-semibold uppercase transition-transform",
+                  active
+                    ? "bg-black text-white translate-x-0.5 translate-y-0.5"
+                    : "bg-white text-neutral-800 hover:bg-black hover:text-white",
+                ].join(" ")}
+              >
+                <span>{option.label}</span>
+                {active && (
+                  <span className="h-1.5 w-4 border-b-2 border-white" />
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
     </aside>

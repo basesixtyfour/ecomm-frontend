@@ -1,5 +1,6 @@
 import { Loader2 } from "lucide-react";
 import { ProductCard } from "./ProductCard";
+import { Button } from "../ui/button";
 
 export const ProductGrid = ({
   products,
@@ -21,20 +22,16 @@ export const ProductGrid = ({
 
       {hasMore && (
         <div className="mt-8 flex justify-center">
-          <button
-            onClick={onLoadMore}
-            disabled={isLoadingMore}
-            className="px-6 py-3 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-400 text-white font-medium rounded-lg transition-colors duration-200 flex items-center gap-2"
-          >
+          <Button onClick={onLoadMore} disabled={isLoadingMore}>
             {isLoadingMore ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin" />
                 Loading...
               </>
             ) : (
               "Load More Products"
             )}
-          </button>
+          </Button>
         </div>
       )}
     </>

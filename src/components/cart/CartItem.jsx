@@ -25,55 +25,55 @@ export const CartItem = ({ id, quantity, product }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden flex gap-4 md:gap-5 p-4 md:p-5">
-      <div className="flex-shrink-0 w-20 h-20 md:w-24 md:h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center">
-        <Package className="w-8 h-8 md:w-10 md:h-10 text-gray-400" />
+    <div className="flex gap-4 border-2 border-black bg-white p-4 md:gap-5 md:p-5">
+      <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center border-2 border-black bg-white md:h-24 md:w-24">
+        <Package className="h-8 w-8 text-neutral-700 md:h-10 md:w-10" />
       </div>
       <div className="flex-1 min-w-0">
         <Link
           to={`/products/${product?.id}`}
-          className="font-semibold text-gray-900 hover:text-gray-600 transition-colors line-clamp-2"
+          className="line-clamp-2 font-semibold uppercase tracking-tight text-black hover:text-neutral-700"
         >
           {product?.name ?? `Item #${id}`}
         </Link>
         {product?.description && (
-          <p className="text-sm text-gray-500 mt-1 line-clamp-1">
+          <p className="mt-1 line-clamp-1 text-sm text-neutral-700">
             {product.description}
           </p>
         )}
-        <p className="text-gray-600 text-sm mt-2">
+        <p className="mt-2 text-sm text-neutral-800">
           {formatPrice(product?.price ?? 0)} × {quantity}
         </p>
       </div>
-      <div className="flex-shrink-0 flex flex-col items-end gap-3">
-        <p className="font-semibold text-gray-900">
+      <div className="flex flex-shrink-0 flex-col items-end gap-3">
+        <p className="font-black text-black">
           {formatPrice(((product?.price ?? 0) * quantity))}
         </p>
-        <div className="flex items-center gap-3 bg-gray-100 rounded-lg p-1">
+        <div className="flex items-center gap-3 border-2 border-black bg-white p-1">
           <button
             type="button"
             onClick={() => handleCartUpdate(quantity - 1)}
             disabled={isUpdating}
-            className="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="flex h-10 w-10 items-center justify-center border-r-2 border-black bg-white hover:bg-black hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
             title={quantity === 1 ? "Remove from cart" : "Decrease quantity"}
           >
             {quantity === 1 ? (
-              <Trash2 className="w-5 h-5 text-red-600" />
+              <Trash2 className="h-5 w-5 text-red-600" />
             ) : (
-              <Minus className="w-5 h-5 text-gray-700" />
+              <Minus className="h-5 w-5 text-black" />
             )}
           </button>
-          <span className="flex-1 text-center font-semibold text-gray-900 min-w-[2rem]">
+          <span className="min-w-[2rem] flex-1 text-center font-semibold text-black">
             {quantity}
           </span>
           <button
             type="button"
             onClick={() => handleCartUpdate(quantity + 1)}
             disabled={isUpdating}
-            className="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="flex h-10 w-10 items-center justify-center border-l-2 border-black bg-white hover:bg-black hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
             title="Increase quantity"
           >
-            <Plus className="w-5 h-5 text-gray-700" />
+            <Plus className="h-5 w-5 text-black" />
           </button>
         </div>
       </div>

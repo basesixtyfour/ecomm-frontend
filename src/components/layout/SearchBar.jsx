@@ -73,34 +73,37 @@ export const SearchBar = ({ className }) => {
   };
 
   return (
-    <div className={`relative max-w-md w-full ${className || ""}`}>
-      <div className="flex items-stretch">
+    <div className={`relative w-full max-w-md ${className || ""}`}>
+      <div className="flex items-stretch rounded-none border-2 border-black bg-white px-2 py-1 shadow-[var(--shadow-hard-md)] focus-within:ring-2 focus-within:ring-black focus-within:ring-offset-2 focus-within:ring-offset-white transition-all">
+        <div className="flex items-center px-2 text-neutral-500">
+          <Search className="h-4 w-4" />
+        </div>
         <input
           type="text"
-          placeholder="Search"
+          placeholder="Search products..."
           value={value}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
-          className="flex-1 px-4 py-2 h-10 rounded-l-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="flex-1 border-none bg-transparent px-1.5 py-1 text-sm text-black placeholder:text-neutral-500 focus:outline-none"
         />
         <button
           type="button"
           onClick={handleSearch}
-          className="px-3 h-10 bg-gray-600 hover:bg-gray-700 text-white rounded-r-md border border-l-0 border-gray-300 flex items-center justify-center transition-colors"
+          className="ml-1 inline-flex h-8 items-center justify-center rounded-none border-2 border-black bg-black px-3 text-xs font-black uppercase text-white shadow-[var(--shadow-hard-md)] hover:bg-white hover:text-black active:translate-x-0.5 active:translate-y-0.5 transition-transform"
           aria-label="Search"
         >
-          <Search className="w-5 h-5" />
+          Go
         </button>
       </div>
 
       {results.length > 0 && (
-        <ul className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto z-50">
+        <ul className="absolute top-full left-0 right-0 z-50 mt-2 max-h-60 overflow-y-auto rounded-none border-2 border-black bg-white shadow-[var(--shadow-hard-lg)]">
           {results.map((product) => (
             <li key={product.id}>
               <Link
                 to={`/products/${product.id}`}
                 onClick={() => setResults([])}
-                className="block px-4 py-2 hover:bg-gray-100"
+                className="block px-4 py-2 text-sm text-black hover:bg-neutral-100"
               >
                 {product.name}
               </Link>

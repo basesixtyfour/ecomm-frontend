@@ -4,19 +4,19 @@ import { formatPrice } from "../../utils/price";
 
 export const OrderSummary = ({ subtotal, itemCount, isGuest = false }) => {
   return (
-    <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6 sticky top-6">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">
-        Order Summary
+    <div className="sticky top-6 border-2 border-black bg-white p-6 text-black shadow-[var(--shadow-hard-md)]">
+      <h2 className="mb-4 text-sm font-black uppercase tracking-[0.18em]">
+        ORDER SUMMARY
       </h2>
-      <div className="space-y-2 text-gray-600">
+      <div className="space-y-2 text-sm text-neutral-800">
         <div className="flex justify-between">
           <span>Subtotal ({itemCount} items)</span>
           <span>{formatPrice(subtotal)}</span>
         </div>
       </div>
-      <div className="border-t border-gray-200 mt-4 pt-4 flex justify-between items-center">
-        <span className="font-semibold text-gray-900">Total</span>
-        <span className="text-xl font-bold text-gray-900">
+      <div className="mt-4 flex items-center justify-between border-t-2 border-black pt-4">
+        <span className="text-sm font-semibold">TOTAL</span>
+        <span className="text-xl font-black">
           {formatPrice(subtotal)}
         </span>
       </div>
@@ -24,29 +24,29 @@ export const OrderSummary = ({ subtotal, itemCount, isGuest = false }) => {
         <>
           <Link
             to={`/login?redirectUrl=${encodeURIComponent("/cart")}`}
-            className="w-full mt-6 flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3.5 px-4 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+            className="mt-6 flex w-full items-center justify-center gap-2 border-2 border-black bg-[var(--color-accent)] py-3.5 px-4 text-sm font-black uppercase tracking-[0.18em] text-[var(--color-accent-foreground)] shadow-[var(--shadow-hard-md)] hover:bg-black hover:text-[var(--color-accent-foreground)]"
           >
-            <LogIn className="w-5 h-5" />
-            Sign in to checkout
+            <LogIn className="h-5 w-5" />
+            SIGN IN TO CHECKOUT
           </Link>
-          <p className="mt-3 text-center text-xs text-gray-500">
-            Your cart will be saved when you sign in
+          <p className="mt-3 text-center text-[11px] text-neutral-700">
+            Your cart will be saved when you sign in.
           </p>
         </>
       ) : (
         <Link
           to="/checkout"
-          className="w-full mt-6 flex items-center justify-center gap-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3.5 px-4 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+          className="mt-6 flex w-full items-center justify-center gap-2 border-2 border-black bg-black py-3.5 px-4 text-sm font-black uppercase tracking-[0.18em] text-white shadow-[var(--shadow-hard-md)] hover:bg-white hover:text-black"
         >
-          Proceed to Checkout
-          <ArrowRight className="w-5 h-5" />
+          PROCEED TO CHECKOUT
+          <ArrowRight className="h-5 w-5" />
         </Link>
       )}
       <Link
         to="/products"
-        className="block mt-3 text-center text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+        className="mt-3 block text-center text-xs font-semibold uppercase tracking-[0.18em] text-neutral-800 transition-colors hover:text-black"
       >
-        Continue shopping
+        CONTINUE SHOPPING
       </Link>
     </div>
   );
