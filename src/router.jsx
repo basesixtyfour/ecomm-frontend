@@ -1,4 +1,4 @@
-import { createBrowserRouter, createRoutesFromElements, Route } from "react-router-dom";
+import { createBrowserRouter, createRoutesFromElements, Outlet, Route } from "react-router-dom";
 import { Layout } from "./components/layout/Layout";
 import { LandingPage } from "./pages/LandingPage";
 import { ProductDetail } from "./pages/ProductDetail";
@@ -17,6 +17,7 @@ import { store } from "./store";
 import { fetchCartAsync, loadLocalCart, mergeCartAsync } from "./context/cartSlice";
 import { initializeAuth, clearAccessToken } from "./context/authSlice";
 import { getLocalCart } from "./utils/localCart";
+import { AuthLayout } from "./components/layout/AuthLayout";
 
 let authInitPromise = null;
 
@@ -43,7 +44,7 @@ export const router = createBrowserRouter(
     createRoutesFromElements(
       <Route 
         path="/" 
-        element={<Layout />}
+        element={<Outlet />}
         loader={async () => {
           try {
             await ensureAuth();
@@ -65,88 +66,93 @@ export const router = createBrowserRouter(
         }}
         HydrateFallback = {RootLoaderFallback}
       >
-        <Route index element={<LandingPage />} />
-        <Route 
-          path="products" 
-          element={<ProductCatalog />}
-        />
-        <Route 
-          path="products/:productId" 
-          element={<ProductDetail />}
-          loader={async ({ params }) => {
-            try {
-              const res = await fetchProduct(params.productId);
-              return res;
-            } catch (err) {
-              toast.error(err?.message || "Failed to load product", { toastId: "product:loader:exception" });
-              return null;
+        <Route element={<Layout />}>
+          <Route index element={<LandingPage />} />
+          <Route 
+            path="products" 
+            element={<ProductCatalog />}
+          />
+          <Route 
+            path="products/:productId" 
+            element={<ProductDetail />}
+            loader={async ({ params }) => {
+              try {
+                const res = await fetchProduct(params.productId);
+                return res;
+              } catch (err) {
+                toast.error(err?.message || "Failed to load product", { toastId: "product:loader:exception" });
+                return null;
+              }
+            }}
+          />
+          <Route 
+            path="cart" 
+            element={<CartPage />}
+          />
+          <Route 
+            path="checkout" 
+            element={
+              <ProtectedRoute>
+                <CheckoutPage />
+              </ProtectedRoute>
             }
-          }}
-        />
-        <Route 
-          path="cart" 
-          element={<CartPage />}
-        />
-        <Route 
-          path="checkout" 
-          element={
-            <ProtectedRoute>
-              <CheckoutPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route 
-          path="profile" 
-          element={
-            <ProtectedRoute>
-              <AccountPage />
-            </ProtectedRoute>
-          }
-          loader={async () => {
-            try {
-              await ensureAuth();
-              const { auth } = store.getState();
-              return auth.user ?? (await fetchUserInfo());
-            } catch (err) {
-              toast.error(err?.message || "Failed to load profile", { toastId: "profile:loader:exception" });
-              return null;
+          />
+          <Route 
+            path="profile" 
+            element={
+              <ProtectedRoute>
+                <AccountPage />
+              </ProtectedRoute>
             }
-          }}
-        />
-        <Route 
-          path="profile/orders" 
-          element={
-            <ProtectedRoute>
-              <OrdersPage />
-            </ProtectedRoute>
-          }
-          loader={async () => {
-            try {
-              await ensureAuth();
-              const data = await fetchOrders();
-              return Array.isArray(data) ? data : data.results || [];
-            } catch (err) {
-              toast.error(err?.message || "Failed to load orders", { toastId: "orders:loader:exception" });
-              return [];
+            loader={async () => {
+              try {
+                await ensureAuth();
+                const { auth } = store.getState();
+                return auth.user ?? (await fetchUserInfo());
+              } catch (err) {
+                toast.error(err?.message || "Failed to load profile", { toastId: "profile:loader:exception" });
+                return null;
+              }
+            }}
+          />
+          <Route 
+            path="profile/orders" 
+            element={
+              <ProtectedRoute>
+                <OrdersPage />
+              </ProtectedRoute>
             }
-          }}
-        />
-        <Route
-          path="agent"
-          element={
-            <ProtectedRoute staffOnly>
-              <SupportDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route 
-          path="login" 
-          element={<LoginPage />}
-        />
-        <Route 
-          path="register" 
-          element={<SignUpPage />}
-        />
+            loader={async () => {
+              try {
+                await ensureAuth();
+                const data = await fetchOrders();
+                return Array.isArray(data) ? data : data.results || [];
+              } catch (err) {
+                toast.error(err?.message || "Failed to load orders", { toastId: "orders:loader:exception" });
+                return [];
+              }
+            }}
+          />
+          <Route
+            path="agent"
+            element={
+              <ProtectedRoute staffOnly>
+                <SupportDashboard />
+              </ProtectedRoute>
+            }
+          />
+        </Route>
+
+        <Route element={<AuthLayout />}>
+          <Route 
+            path="login" 
+            element={<LoginPage />}
+          />
+          <Route 
+            path="register" 
+            element={<SignUpPage />}
+          />
+        </Route>
       </Route>
     )
   );

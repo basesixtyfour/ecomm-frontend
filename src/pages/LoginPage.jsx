@@ -68,11 +68,16 @@ export const LoginPage = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="max-w-sm mx-auto mt-20 bg-white rounded-xl shadow-lg p-8 flex flex-col gap-5 border border-gray-200"
+      className="mx-auto mt-20 flex max-w-sm flex-col gap-5 border-2 border-black bg-white p-8"
     >
-      <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">Login</h2>
+      <h2 className="mb-4 text-center text-2xl font-black uppercase tracking-tight text-black">
+        Login
+      </h2>
       <div>
-        <label className="block text-gray-700 mb-1 font-medium" htmlFor="email">
+        <label
+          className="mb-1 block text-xs font-semibold uppercase tracking-[0.16em] text-black"
+          htmlFor="email"
+        >
           Email
         </label>
         <input
@@ -81,12 +86,15 @@ export const LoginPage = () => {
           placeholder="Enter your email"
           value={email}
           onChange={e => setEmail(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
+          className="w-full border-2 border-black bg-white px-4 py-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 focus:ring-offset-white"
           required
         />
       </div>
       <div>
-        <label className="block text-gray-700 mb-1 font-medium" htmlFor="password">
+        <label
+          className="mb-1 block text-xs font-semibold uppercase tracking-[0.16em] text-black"
+          htmlFor="password"
+        >
           Password
         </label>
         <input
@@ -95,41 +103,49 @@ export const LoginPage = () => {
           placeholder="Enter your password"
           value={password}
           onChange={e => setPassword(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
+          className="w-full border-2 border-black bg-white px-4 py-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 focus:ring-offset-white"
           required
         />
       </div>
       <button
         type="submit"
-        className="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg py-2 mt-3 transition-colors shadow"
+        className="mt-3 w-full border-2 border-black bg-black py-2 text-xs font-black uppercase tracking-[0.18em] text-white disabled:opacity-60"
         disabled={loading}
       >
-        {loading ? "Loading..." : "Login"}
+        {loading ? "LOADING..." : "LOGIN"}
       </button>
       {auth0Enabled && (
         <>
           <div className="relative my-4">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300" />
+              <div className="w-full border-t-2 border-black" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">or</span>
+              <span className="bg-white px-2 text-xs font-semibold uppercase tracking-[0.16em] text-neutral-800">
+                OR
+              </span>
             </div>
           </div>
           <button
             type="button"
             onClick={handleAuth0Login}
-            className="w-full flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-900 text-white font-semibold rounded-lg py-2 transition-colors shadow"
+            className="flex w-full items-center justify-center gap-2 border-2 border-black bg-black py-2 text-xs font-black uppercase tracking-[0.18em] text-white"
           >
-            <Shield className="w-5 h-5" />
-            Continue with Auth0
+            <Shield className="h-5 w-5" />
+            CONTINUE WITH AUTH0
           </button>
         </>
       )}
-      <p className="text-sm text-center mt-2">
-        Don't have an account? <Link to="/register" className="text-teal-600 hover:underline">Register</Link>
+      <p className="mt-2 text-center text-xs text-neutral-800">
+        Don&apos;t have an account?{" "}
+        <Link
+          to="/register"
+          className="font-semibold uppercase tracking-[0.16em] text-black underline-offset-4 hover:underline"
+        >
+          Register
+        </Link>
       </p>
-      {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+      {error && <p className="mt-2 text-xs font-semibold text-red-600">{error}</p>}
     </form>
   );
 };

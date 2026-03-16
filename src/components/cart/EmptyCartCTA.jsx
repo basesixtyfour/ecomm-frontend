@@ -3,25 +3,25 @@ import { ShoppingBag, ArrowRight } from "lucide-react";
 
 export const EmptyCartCTA = () => {
   return (
-    <div className="bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden">
-      <div className="px-6 py-16 md:py-24 text-center">
-        <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-2xl mb-6">
-          <ShoppingBag className="w-10 h-10 text-gray-400" />
+    <div className="border-2 border-black bg-white">
+      <div className="px-6 py-16 text-center md:py-24">
+        <div className="mb-6 inline-flex h-20 w-20 items-center justify-center border-2 border-black bg-white">
+          <ShoppingBag className="h-10 w-10 text-neutral-700" />
         </div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">
-          Your cart is empty
+        <h2 className="mb-2 text-xl font-black uppercase tracking-tight text-black">
+          YOUR CART IS EMPTY
         </h2>
-        <p className="text-gray-600 mb-8 max-w-sm mx-auto">
+        <p className="mx-auto mb-8 max-w-sm text-sm text-neutral-800">
           Looks like you haven’t added anything yet. Browse our products and
           find something you’ll love.
         </p>
         <Link
           to="/products"
-          className="inline-flex items-center gap-2 bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors duration-200 shadow-md hover:shadow-lg"
+          className="inline-flex items-center gap-2 border-2 border-black bg-black px-6 py-3 text-xs font-black uppercase tracking-[0.18em] text-white"
         >
-          <ShoppingBag className="w-5 h-5" />
-          Browse Products
-          <ArrowRight className="w-5 h-5" />
+          <ShoppingBag className="h-5 w-5" />
+          BROWSE PRODUCTS
+          <ArrowRight className="h-5 w-5" />
         </Link>
       </div>
     </div>

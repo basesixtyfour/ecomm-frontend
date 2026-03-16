@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { registerUser } from "../services/api";
 import { useSelector } from "react-redux";
@@ -58,12 +58,17 @@ export const SignUpPage = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="max-w-sm mx-auto mt-20 bg-white rounded-xl shadow-lg p-8 flex flex-col gap-5 border border-gray-200"
+      className="mx-auto mt-20 flex max-w-sm flex-col gap-5 border-2 border-black bg-white p-8"
     >
-      <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">Register</h2>
+      <h2 className="mb-4 text-center text-2xl font-black uppercase tracking-tight text-black">
+        Register
+      </h2>
 
       <div>
-        <label className="block text-gray-700 mb-1 font-medium" htmlFor="username">
+        <label
+          className="mb-1 block text-xs font-semibold uppercase tracking-[0.16em] text-black"
+          htmlFor="username"
+        >
           Username
         </label>
         <input
@@ -72,13 +77,16 @@ export const SignUpPage = () => {
           placeholder="Choose a username"
           value={username}
           onChange={e => setUsername(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
+          className="w-full border-2 border-black bg-white px-4 py-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 focus:ring-offset-white"
           required
         />
       </div>
 
       <div>
-        <label className="block text-gray-700 mb-1 font-medium" htmlFor="email">
+        <label
+          className="mb-1 block text-xs font-semibold uppercase tracking-[0.16em] text-black"
+          htmlFor="email"
+        >
           Email
         </label>
         <input
@@ -87,13 +95,16 @@ export const SignUpPage = () => {
           placeholder="Enter your email"
           value={email}
           onChange={e => setEmail(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
+          className="w-full border-2 border-black bg-white px-4 py-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 focus:ring-offset-white"
           required
         />
       </div>
 
       <div>
-        <label className="block text-gray-700 mb-1 font-medium" htmlFor="password">
+        <label
+          className="mb-1 block text-xs font-semibold uppercase tracking-[0.16em] text-black"
+          htmlFor="password"
+        >
           Password
         </label>
         <input
@@ -102,13 +113,16 @@ export const SignUpPage = () => {
           placeholder="Create a password"
           value={password}
           onChange={e => setPassword(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
+          className="w-full border-2 border-black bg-white px-4 py-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 focus:ring-offset-white"
           required
         />
       </div>
 
       <div>
-        <label className="block text-gray-700 mb-1 font-medium" htmlFor="confirm">
+        <label
+          className="mb-1 block text-xs font-semibold uppercase tracking-[0.16em] text-black"
+          htmlFor="confirm"
+        >
           Confirm Password
         </label>
         <input
@@ -117,24 +131,34 @@ export const SignUpPage = () => {
           placeholder="Repeat your password"
           value={confirm}
           onChange={e => setConfirm(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
+          className="w-full border-2 border-black bg-white px-4 py-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-2 focus:ring-offset-white"
           required
         />
       </div>
 
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded relative text-sm">
+        <div className="border-2 border-red-600 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700">
           {error}
         </div>
       )}
 
       <button
         type="submit"
-        className="w-full py-2 px-4 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg transition disabled:opacity-60"
+        className="w-full border-2 border-black bg-black py-2 px-4 text-xs font-black uppercase tracking-[0.18em] text-white disabled:opacity-60"
         disabled={loading}
       >
-        {loading ? "Registering..." : "Register"}
+        {loading ? "REGISTERING..." : "REGISTER"}
       </button>
+
+      <p className="mt-1 text-center text-xs text-neutral-800">
+        Already have an account?{" "}
+        <Link
+          to="/login"
+          className="font-semibold uppercase tracking-[0.16em] text-black underline-offset-4 hover:underline"
+        >
+          Login
+        </Link>
+      </p>
     </form>
   );
 };
