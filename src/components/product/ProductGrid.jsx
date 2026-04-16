@@ -22,7 +22,11 @@ export const ProductGrid = ({
 
       {hasMore && (
         <div className="mt-8 flex justify-center">
-          <Button onClick={onLoadMore} disabled={isLoadingMore}>
+          <Button
+            onClick={onLoadMore}
+            disabled={isLoadingMore}
+            className="!bg-black !text-white hover:!bg-white hover:!text-black"
+          >
             {isLoadingMore ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />

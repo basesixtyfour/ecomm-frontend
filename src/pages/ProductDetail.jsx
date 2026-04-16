@@ -97,7 +97,7 @@ export const ProductDetail = () => {
                     type="button"
                     onClick={() => handleCartUpdate(currentQuantity - 1)}
                     disabled={isUpdating}
-                    className="flex h-10 w-10 items-center justify-center border-r-2 border-black bg-white hover:bg-black hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+                    className="flex h-10 w-10 items-center justify-center border-r-2 border-black bg-white hover:bg-black hover:[&_svg]:text-white! disabled:cursor-not-allowed disabled:opacity-60"
                     title={currentQuantity === 1 ? "Remove from cart" : "Decrease quantity"}
                   >
                     {currentQuantity === 1 ? (
@@ -113,7 +113,7 @@ export const ProductDetail = () => {
                     type="button"
                     onClick={() => handleCartUpdate(currentQuantity + 1)}
                     disabled={isUpdating}
-                    className="flex h-10 w-10 items-center justify-center border-l-2 border-black bg-white hover:bg-black hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+                    className="flex h-10 w-10 items-center justify-center border-l-2 border-black bg-white hover:bg-black hover:[&_svg]:text-white! disabled:cursor-not-allowed disabled:opacity-60"
                     title="Increase quantity"
                   >
                     <Plus className="h-5 w-5 text-black" />
